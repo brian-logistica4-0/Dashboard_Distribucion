@@ -8,8 +8,11 @@ st.set_page_config(page_title="Dashboard Logístico", layout="wide")
 # Título
 st.title("📦 Indicador de Rechazo Logístico")
 
+# =========================
 # Cargar datos
-tabla = pd.read_csv("tabla_rechazo.csv")
+# =========================
+tabla_cf = pd.read_csv("tabla_rechazo.csv")
+tabla_viajes = pd.read_csv("tabla_rechazo_viajes.csv")
 
 # Orden correcto de meses
 orden_meses = [
@@ -17,31 +20,54 @@ orden_meses = [
     "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"
 ]
 
-tabla["MES"] = pd.Categorical(tabla["MES"], categories=orden_meses, ordered=True)
-tabla = tabla.sort_values(["AÑO", "MES"])
+for tabla in [tabla_cf, tabla_viajes]:
+    tabla["MES"] = pd.Categorical(tabla["MES"], categories=orden_meses, ordered=True)
+    tabla.sort_values(["AÑO", "MES"], inplace=True)
 
+# =========================
 # Selector de año
-anio = st.selectbox("Seleccionar Año", sorted(tabla["AÑO"].unique()))
+# =========================
+anio = st.selectbox("Seleccionar Año", sorted(tabla_cf["AÑO"].unique()))
 
 # Filtrar datos
-df = tabla[tabla["AÑO"] == anio]
+df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
+df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
 
-# KPI
-st.metric("Rechazo Promedio (%)", f"{df['RECHAZO_%'].mean():.2f}%")
+# =========================
+# KPI (en columnas)
+# =========================
+col1, col2 = st.columns(2)
 
-# Gráfico de barras interactivo
-fig = px.bar(
-    df,
-    x="MES",
-    y="RECHAZO_%",
-    text="RECHAZO_%",
-    title=f"Rechazo por Mes - {anio}"
+with col1:
+    st.metric("Rechazo CF Promedio (%)", f"{df_cf['RECHAZO_%'].mean():.2f}%")
+
+with col2:
+    st.metric("Rechazo Viajes Promedio (%)", f"{df_viajes['RECHAZO_%_VIAJES'].mean():.2f}%")
+
+# =========================
+# Gráfico comparativo
+# =========================
+df_merge = df_cf.merge(
+    df_viajes[["AÑO","MES","RECHAZO_%_VIAJES"]],
+    on=["AÑO","MES"],
+    how="left"
 )
 
-fig.update_traces(texttemplate="%{text:.2f}%", textposition="outside")
+fig = px.bar(
+    df_merge,
+    x="MES",
+    y=["RECHAZO_%", "RECHAZO_%_VIAJES"],
+    barmode="group",
+    title=f"Rechazo CF vs Viajes - {anio}"
+)
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Tabla
-st.subheader("Tabla de Datos")
-st.dataframe(df)
+# =========================
+# Tablas
+# =========================
+st.subheader("Tabla Rechazo CF")
+st.dataframe(df_cf)
+
+st.subheader("Tabla Rechazo Viajes")
+st.dataframe(df_viajes)
