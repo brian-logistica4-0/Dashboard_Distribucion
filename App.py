@@ -45,29 +45,29 @@ with col2:
     st.metric("Rechazo Viajes Promedio (%)", f"{df_viajes['RECHAZO_%_VIAJES'].mean():.2f}%")
 
 # =========================
-# Gráfico comparativo
+# Gráficos separados
 # =========================
-df_merge = df_cf.merge(
-    df_viajes[["AÑO","MES","RECHAZO_%_VIAJES"]],
-    on=["AÑO","MES"],
-    how="left"
-)
 
-fig = px.bar(
-    df_merge,
+col1, col2 = st.columns(2)
+
+# --- GRAFICO 1 ---
+fig_cf = px.bar(
+    df_cf,
     x="MES",
-    y=["RECHAZO_%", "RECHAZO_%_VIAJES"],
-    barmode="group",
-    title=f"Rechazo CF vs Viajes - {anio}"
+    y="RECHAZO_%",
+    title=f"Rechazo CF - {anio}"
 )
 
-st.plotly_chart(fig, use_container_width=True)
+# --- GRAFICO 2 ---
+fig_viajes = px.bar(
+    df_viajes,
+    x="MES",
+    y="RECHAZO_%_VIAJES",
+    title=f"Rechazo Viajes - {anio}"
+)
 
-# =========================
-# Tablas
-# =========================
-st.subheader("Tabla Rechazo CF")
-st.dataframe(df_cf)
+with col1:
+    st.plotly_chart(fig_cf, use_container_width=True)
 
-st.subheader("Tabla Rechazo Viajes")
-st.dataframe(df_viajes)
+with col2:
+    st.plotly_chart(fig_viajes, use_container_width=True)
