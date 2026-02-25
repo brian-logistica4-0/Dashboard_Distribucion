@@ -48,6 +48,8 @@ with col2:
 # Gráficos separados
 # =========================
 
+st.subheader("Gráficos de Rechazo")
+
 col1, col2 = st.columns(2)
 
 # --- GRAFICO 1 ---
@@ -71,3 +73,14 @@ with col1:
 
 with col2:
     st.plotly_chart(fig_viajes, use_container_width=True)
+
+
+# =========================
+# Tablas
+# =========================
+
+st.subheader("Tabla Rechazo CF")
+st.dataframe(df_cf)
+
+st.subheader("Tabla Rechazo Viajes")
+st.dataframe(df_viajes)
