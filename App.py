@@ -2,19 +2,18 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
-import json
 
 # ======================
 # CONFIG
 # ======================
-st.set_page_config(page_title="Control Tower Logística", layout="wide")
+st.set_page_config(page_title="Dashboard Logístico", layout="wide")
 
-st.title("🚚 Control Tower Logística - Nivel Premium")
+st.title("📦 Dashboard Logístico - Rechazo")
 
 # ======================
 # CARGA DATOS
 # ======================
+
 @st.cache_data
 def cargar_datos():
     df = pd.read_csv("dataset_limpio.csv")
@@ -25,125 +24,155 @@ def cargar_datos():
 df, tabla_cf, tabla_viajes = cargar_datos()
 
 # ======================
-# PREPARACION DATOS
+# FILTRO
 # ======================
-df["CF_FALLIDAS"] = np.where(df["ES_FALLIDA"], df["CF"], 0)
 
-# ======================
-# FILTROS
-# ======================
 st.sidebar.header("Filtros")
-
 anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
 df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
 df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
 
 # ======================
-# KPI COLORS
+# 🟦 KPIs
 # ======================
-def color_kpi(valor):
-    if valor < 5:
-        return "green"
-    elif valor < 10:
-        return "orange"
-    else:
-        return "red"
+
+st.subheader("📊 Indicadores")
+
+col1, col2, col3 = st.columns(3)
 
 rechazo_cf = df_cf["RECHAZO_%"].mean()
 rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
 total_cf = df_cf["CF"].sum()
 
+col1.metric("📦 Total Cajas", f"{int(total_cf):,}")
+col2.metric("❌ Rechazo CF", f"{rechazo_cf:.2f}%")
+col3.metric("🚚 Rechazo Viajes", f"{rechazo_viajes:.2f}%")
+
 # ======================
-# 🟦 FILA 1
+# 🟩 EVOLUCIÓN
 # ======================
+
+st.subheader("📈 Evolución")
+
 col1, col2 = st.columns(2)
 
-# -------- OPERATIVO --------
-with col1:
-    st.subheader("📊 Operación")
+fig_cf = px.bar(df_cf, x="MES", y="RECHAZO_%", title="Rechazo CF")
+fig_viajes = px.bar(df_viajes, x="MES", y="RECHAZO_%_VIAJES", title="Rechazo Viajes")
 
-    k1, k2, k3 = st.columns(3)
-
-    k1.metric("📦 Cajas", f"{int(total_cf):,}")
-    k2.markdown(f"### ❌ Rechazo CF: <span style='color:{color_kpi(rechazo_cf)}'>{rechazo_cf:.2f}%</span>", unsafe_allow_html=True)
-    k3.markdown(f"### 🚚 Rechazo Viajes: <span style='color:{color_kpi(rechazo_viajes)}'>{rechazo_viajes:.2f}%</span>", unsafe_allow_html=True)
-
-    fig_cf = px.line(df_cf, x="MES", y="RECHAZO_%", markers=True)
-    st.plotly_chart(fig_cf, use_container_width=True)
-
-# -------- MAPA PRO --------
-with col2:
-    st.subheader("🗺️ Mapa de Distribución")
-
-    df_map = df.dropna(subset=["LATITUD","LONGITUD"])
-
-    fig_map = px.scatter_mapbox(
-        df_map,
-        lat="LATITUD",
-        lon="LONGITUD",
-        size="CF",
-        color="CF_FALLIDAS",
-        color_continuous_scale="Reds",
-        hover_name="CLIENTE",
-        zoom=9,
-        height=500
-    )
-
-    fig_map.update_layout(mapbox_style="carto-positron")
-
-    st.plotly_chart(fig_map, use_container_width=True)
+col1.plotly_chart(fig_cf, use_container_width=True)
+col2.plotly_chart(fig_viajes, use_container_width=True)
 
 # ======================
-# 🟩 FILA 2
+# 🟨 CLIENTES
 # ======================
-col3, col4 = st.columns(2)
 
-# -------- PERFORMANCE --------
-with col3:
-    st.subheader("🚚 Performance")
+st.subheader("👥 Top Clientes")
 
-    tabla_camion = (
-        df.groupby("CAMION_U")[["CF","CF_FALLIDAS"]]
-        .sum()
-        .reset_index()
-    )
+df_clientes = df.copy()
 
-    tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
-    tabla_camion = tabla_camion[tabla_camion["CF"] > 1000]
+df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 
-    fig_camion = px.bar(
-        tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10),
-        x="CAMION_U",
-        y="RECHAZO_%",
-        color="RECHAZO_%",
-        color_continuous_scale="Reds"
-    )
+tabla_clientes = (
+    df_clientes.groupby("CLIENTE")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
 
-    st.plotly_chart(fig_camion, use_container_width=True)
+top_clientes = tabla_clientes.sort_values("CF_FALLIDAS", ascending=False).head(10)
 
-# -------- RECHAZOS --------
-with col4:
-    st.subheader("📉 Rechazos")
+st.dataframe(top_clientes)
 
-    tabla_cadena = (
-        df.groupby("CADENA2")[["CF","CF_FALLIDAS"]]
-        .sum()
-        .reset_index()
-    )
+# ======================
+# 🚚 CAMIONES
+# ======================
 
-    tabla_cadena["PART_%"] = tabla_cadena["CF_FALLIDAS"] / tabla_cadena["CF_FALLIDAS"].sum() * 100
+st.subheader("🚚 Ranking Camiones")
 
-    fig_pie = px.pie(tabla_cadena, names="CADENA2", values="PART_%")
-    st.plotly_chart(fig_pie, use_container_width=True)
+tabla_camion = (
+    df_clientes.groupby("CAMION_U")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
 
-    df_aut = df[df["AUTORIZADO_?"].isin(["CHOFER","DISTRIBUCION","GREMIO"])]
+tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
 
-    fig_aut = px.bar(
-        df_aut.groupby("AUTORIZADO_?")["CF"].sum().reset_index(),
-        x="AUTORIZADO_?",
-        y="CF",
-        color="CF"
-    )
+tabla_camion = tabla_camion[tabla_camion["CF"] > 1000]
 
-    st.plotly_chart(fig_aut, use_container_width=True)
+st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10))
+
+# ======================
+# 🧑‍✈️ CHOFERES
+# ======================
+
+st.subheader("🧑‍✈️ Ranking Choferes")
+
+tabla_chofer = (
+    df_clientes.groupby("CHOFER")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
+
+tabla_chofer["RECHAZO_%"] = tabla_chofer["CF_FALLIDAS"] / tabla_chofer["CF"] * 100
+tabla_chofer = tabla_chofer[tabla_chofer["CF"] > 1000]
+
+st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10))
+
+# ======================
+# 🟥 CADENAS
+# ======================
+
+st.subheader("🏪 Cadenas")
+
+tabla_cadena = (
+    df_clientes.groupby("CADENA2")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
+
+total = tabla_cadena["CF_FALLIDAS"].sum()
+
+tabla_cadena["PART_RECHAZO_%"] = tabla_cadena["CF_FALLIDAS"] / total * 100
+
+st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10))
+
+# ======================
+# 🟪 AUTORIZACION
+# ======================
+
+st.subheader("⚠️ Causas de Rechazo")
+
+df_aut = df[df["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
+
+tabla_aut = (
+    df_aut.groupby("AUTORIZADO_?")["CF"]
+    .sum()
+    .reset_index()
+)
+
+total_fallidas = tabla_aut["CF"].sum()
+
+tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
+
+st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False))
+
+# ======================
+# 🗺️ MAPA
+# ======================
+
+st.subheader("🗺️ Mapa de Clientes")
+
+df_map = df.dropna(subset=["LATITUD", "LONGITUD"])
+
+fig_map = px.scatter_mapbox(
+    df_map,
+    lat="LATITUD",
+    lon="LONGITUD",
+    hover_name="CLIENTE",
+    zoom=9,
+    height=600
+)
+
+fig_map.update_layout(mapbox_style="carto-positron")
+
+st.plotly_chart(fig_map, use_container_width=True)
