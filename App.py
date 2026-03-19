@@ -70,7 +70,6 @@ col2.plotly_chart(fig_viajes, use_container_width=True)
 st.subheader("👥 Top Clientes")
 
 df_clientes = df.copy()
-
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 
 tabla_clientes = (
@@ -96,7 +95,6 @@ tabla_camion = (
 )
 
 tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
-
 tabla_camion = tabla_camion[tabla_camion["CF"] > 1000]
 
 st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10))
@@ -157,17 +155,30 @@ tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
 st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False))
 
 # ======================
-# 🗺️ MAPA
+# 🗺️ MAPA MEJORADO (TU FORMATO)
 # ======================
 
 st.subheader("🗺️ Mapa de Clientes")
 
-df_map = df.dropna(subset=["LATITUD", "LONGITUD"])
+df_map = df.copy()
+
+# limpieza segura
+df_map["LATITUD"] = pd.to_numeric(df_map["LATITUD"], errors="coerce")
+df_map["LONGITUD"] = pd.to_numeric(df_map["LONGITUD"], errors="coerce")
+df_map["CF"] = pd.to_numeric(df_map["CF"], errors="coerce")
+
+df_map["CF_FALLIDAS"] = np.where(df_map["ES_FALLIDA"], df_map["CF"], 0)
+
+df_map = df_map.dropna(subset=["LATITUD", "LONGITUD"])
+df_map = df_map[df_map["CF"] > 0]
 
 fig_map = px.scatter_mapbox(
     df_map,
     lat="LATITUD",
     lon="LONGITUD",
+    size="CF",                     # tamaño = volumen
+    color="CF_FALLIDAS",          # color = rechazo
+    color_continuous_scale="Reds",
     hover_name="CLIENTE",
     zoom=9,
     height=600
