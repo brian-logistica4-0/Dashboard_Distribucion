@@ -26,7 +26,7 @@ df, tabla_cf, tabla_viajes = cargar_datos()
 # ======================
 # FILTRO
 # ======================
-
+df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
 st.sidebar.header("Filtros")
 anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
@@ -38,8 +38,6 @@ df = df[df["FECHA_DE_SALIDA"].dt.year == anio]
 # ======================
 # CAMPOS DE TIEMPO
 # ======================
-
-df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
 
 # fecha limpia para filtros
 df["FECHA"] = df["FECHA_DE_SALIDA"].dt.date
