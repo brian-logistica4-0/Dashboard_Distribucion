@@ -194,6 +194,7 @@ with col1:
 
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
+    st.subheader("Geografia - Caracteristicas")
     st.plotly_chart(fig_map, use_container_width=True)
 
 # ======================
@@ -202,12 +203,13 @@ with col2:
 col3, col4 = st.columns(2)
 
 with col3:
-    st.subheader("🚚 Performance de Flota")
+    st.subheader("🚚 Rechazo por interno")
     st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.subheader("🚚 Rechazo por chofer")
     st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
 
 with col4:
     st.subheader("📉 Análisis de Rechazos")
     st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
-    st.subheader("📉 Análisis de Rechazos2")
+    st.subheader("📉 Autorizacion de retorno")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
