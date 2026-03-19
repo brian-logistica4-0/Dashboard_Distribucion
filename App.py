@@ -32,6 +32,48 @@ anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
 df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
 df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
+# ======================
+# FILTROS AVANZADOS
+# ======================
+
+formato = st.sidebar.multiselect(
+    "Formato de Cliente",
+    df["FORMATO_CADENA"].dropna().unique()
+)
+
+mes = st.sidebar.multiselect(
+    "Mes",
+    df["MES"].dropna().unique()
+)
+
+dia = st.sidebar.multiselect(
+    "Día",
+    df["DIA"].dropna().unique()
+)
+
+semana = st.sidebar.multiselect(
+    "Semana",
+    df["SEMANA"].dropna().unique()
+)
+
+# ======================
+# APLICAR FILTROS
+# ======================
+
+df_filtrado = df.copy()
+
+if formato:
+    df_filtrado = df_filtrado[df_filtrado["FORMATO_CADENA"].isin(formato)]
+
+if mes:
+    df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
+
+if dia:
+    df_filtrado = df_filtrado[df_filtrado["DIA"].isin(dia)]
+
+if semana:
+    df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
+
 
 # ======================
 # CALCULOS
