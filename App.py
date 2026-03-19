@@ -44,6 +44,24 @@ df["DIA"] = df["FECHA_DE_SALIDA"].dt.day_name()
 df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 
 # ======================
+# FILTRO DE FECHA
+# ======================
+
+# asegurar formato datetime
+df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
+
+fecha_rango = st.sidebar.date_input(
+    "Seleccionar rango de fechas",
+    []
+)
+
+if len(fecha_rango) == 2:
+    inicio, fin = fecha_rango
+    df_filtrado = df_filtrado[
+        (df_filtrado["FECHA_DE_SALIDA"] >= pd.to_datetime(inicio)) &
+        (df_filtrado["FECHA_DE_SALIDA"] <= pd.to_datetime(fin))
+    ]
+# ======================
 # FILTROS AVANZADOS
 # ======================
 
