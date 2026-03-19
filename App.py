@@ -180,8 +180,12 @@ tabla_mes_cf["RECHAZO_%"] = (
 fig_cf = px.bar(tabla_mes_cf, x="MES", y="RECHAZO_%", title="Rechazo CF")
 
 
-# Viajes (si existe ID_VIAJE)
+# ======================
+# VIAJES (ROBUSTO)
+# ======================
+
 if "ID_VIAJE" in df_filtrado.columns:
+
     tabla_mes_viajes = (
         df_filtrado
         .groupby("MES")["ID_VIAJE"]
@@ -196,13 +200,26 @@ if "ID_VIAJE" in df_filtrado.columns:
         .reset_index(name="VIAJES_FALLIDOS")
     )
 
-    tabla_mes_viajes = tabla_mes_viajes.merge(viajes_fallidos, on="MES", how="left").fillna(0)
+    tabla_mes_viajes = tabla_mes_viajes.merge(
+        viajes_fallidos, on="MES", how="left"
+    ).fillna(0)
 
     tabla_mes_viajes["RECHAZO_%"] = (
         tabla_mes_viajes["VIAJES_FALLIDOS"] / tabla_mes_viajes["VIAJES"]
     ) * 100
 
-    fig_viajes = px.bar(tabla_mes_viajes, x="MES", y="RECHAZO_%", title="Rechazo Viajes")
+    fig_viajes = px.bar(
+        tabla_mes_viajes,
+        x="MES",
+        y="RECHAZO_%",
+        title="Rechazo Viajes"
+    )
+
+else:
+    # fallback si no existe ID_VIAJE
+    fig_viajes = px.bar(
+        title="Rechazo Viajes (sin ID_VIAJE disponible)"
+    )
 
 # ======================
 # MAPA
