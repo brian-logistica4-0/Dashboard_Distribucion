@@ -210,7 +210,7 @@ with col3:
     st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
 
 with col4:
-    st.subheader("📉 Análisis de Rechazos")
+    st.subheader("📉 Analisis por cadenas")
     st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
     st.subheader("📉 Autorizacion de retorno")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
