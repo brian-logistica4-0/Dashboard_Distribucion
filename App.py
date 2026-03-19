@@ -186,7 +186,7 @@ with col1:
     k2.metric("❌ Rechazo CF", f"{rechazo_cf:.2f}%")
     k3.metric("🚚 Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
-    g1, g2 = st.columns(4)
+    g1, g2 = st.columns(2)
     g1.plotly_chart(fig_cf, use_container_width=True)
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
