@@ -201,7 +201,7 @@ with col2:
 # ======================
 # 🟩 FILA 2
 # ======================
-col3, col4 = st.columns(2)
+col3, col4 = st.columns(1,2)
 
 with col3:
     st.subheader("🚚 Rechazo por interno")
