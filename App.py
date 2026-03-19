@@ -81,6 +81,7 @@ semana = st.sidebar.multiselect(
 )
 if semana:
     df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
+    
 # ======================
 # CALCULOS
 # ======================
@@ -89,7 +90,7 @@ rechazo_cf = df_cf["RECHAZO_%"].mean()
 rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
 total_cf = df_cf["CF"].sum()
 
-df_clientes = df.copy()
+df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 
 tabla_clientes = (
@@ -127,7 +128,7 @@ tabla_cadena = (
 total = tabla_cadena["CF_FALLIDAS"].sum()
 tabla_cadena["PART_RECHAZO_%"] = tabla_cadena["CF_FALLIDAS"] / total * 100
 
-df_aut = df[df["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
+df_aut = df_filtrado[df_filtrado["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
 
 tabla_aut = (
     df_aut.groupby("AUTORIZADO_?")["CF"]
@@ -192,7 +193,7 @@ color_map = {
     "GBA Sur": "#6A1B9A"
 }
 
-df_map = df.dropna(subset=["LATITUD", "LONGITUD"]).copy()
+df_map = df_filtrado.dropna(subset=["LATITUD", "LONGITUD"]).copy()
 
 fig_map = px.choropleth_mapbox(
     df_geo,
@@ -269,7 +270,7 @@ with col4:
 
 st.subheader("🚛 Rechazo por tipo de camión")
 
-df_camion_tipo = df[
+df_camion_tipo = df_filtrado[
     df["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
 ].copy()
 
@@ -299,7 +300,7 @@ st.dataframe(tabla_tipo_camion, use_container_width=False)
 
 st.subheader("🚚 Rechazo por tipo de viaje")
 
-df_viajes_tipo = df.copy()
+df_viajes_tipo = df_filtrado.copy()
 
 df_viajes_tipo["TIPO_VIAJE"] = np.where(
     df_viajes_tipo["SECUENCIA"] == "1ER VIAJE",
