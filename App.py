@@ -98,7 +98,7 @@ rechazo_cf = df_cf["RECHAZO_%"].mean()
 rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
 total_cf = df_cf["CF"].sum()
 
-rechazo_viajes = (viajes_fallidos / viajes_total) * 100 if viajes_total > 0 else 0
+rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 
@@ -280,7 +280,7 @@ with col4:
 st.subheader("🚛 Rechazo por tipo de camión")
 
 df_camion_tipo = df_filtrado[
-    df["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
+    df_filtrado["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
 ].copy()
 
 df_camion_tipo["CF_FALLIDAS"] = np.where(
