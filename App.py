@@ -32,6 +32,7 @@ anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
 df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
 df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
+df = df[df["FECHA_DE_SALIDA"].dt.year == anio]
 
 # ======================
 # CAMPOS DE TIEMPO
