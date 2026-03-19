@@ -81,13 +81,15 @@ tabla_cadena["PART_RECHAZO_%"] = tabla_cadena["CF_FALLIDAS"] / total * 100
 
 df_aut = df[df["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
 
+# 🔧 FIX IMPORTANTE
+total_fallidas = df_aut["CF"].sum()
+
 tabla_aut = (
     df_aut.groupby("AUTORIZADO_?")["CF"]
     .sum()
     .reset_index()
 )
 
-total_fallidas = tabla_aut["CF"].sum()
 tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
 
 # ======================
@@ -176,7 +178,7 @@ fig_map.update_layout(
 # ======================
 # 🟦 FILA 1
 # ======================
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([1,2])
 
 with col1:
     st.subheader("📊 Dashboard Operativo")
@@ -191,89 +193,40 @@ with col1:
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
     st.subheader("Top Clientes - Rechazos")
-    st.dataframe(top_clientes, use_container_width=True)
+    st.dataframe(top_clientes, use_container_width=False)
 
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
-    st.subheader("Geografia - Caracteristicas")
+    st.caption("Distribución geográfica de clientes")
     st.plotly_chart(fig_map, use_container_width=True)
 
 # ======================
 # 🟩 FILA 2
 # ======================
-col3, col4 = st.columns(2)
+col3, col4 = st.columns([1,2])
 
 with col3:
     st.subheader("🚚 Rechazo por interno")
-    st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=False)
     st.subheader("🚚 Rechazo por chofer")
-    st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=False)
 
 with col4:
     st.subheader("📉 Analisis por cadenas")
-    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=False)
     st.subheader("📉 Autorizacion de retorno")
-    st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
+    st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=False)
 
 # ======================
 # 🚛 RECHAZO POR TIPO DE CAMIÓN
 # ======================
 
 st.subheader("🚛 Rechazo por tipo de camión")
-
-df_camion_tipo = df[
-    df["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
-].copy()
-
-df_camion_tipo["CF_FALLIDAS"] = np.where(
-    df_camion_tipo["ES_FALLIDA"] == True,
-    df_camion_tipo["CF"],
-    0
-)
-
-tabla_tipo_camion = (
-    df_camion_tipo
-    .groupby("TIPO_DE_CAMIÓN")[["CF", "CF_FALLIDAS"]]
-    .sum()
-    .reset_index()
-)
-
-tabla_tipo_camion["RECHAZO_%"] = (
-    tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"]
-) * 100
-
 st.dataframe(tabla_tipo_camion, use_container_width=False)
-
 
 # ======================
 # 🚚 RECHAZO POR TIPO DE VIAJE
 # ======================
 
 st.subheader("🚚 Rechazo por tipo de viaje")
-
-df_viajes_tipo = df.copy()
-
-df_viajes_tipo["TIPO_VIAJE"] = np.where(
-    df_viajes_tipo["SECUENCIA"] == "1ER VIAJE",
-    "1ER VIAJE",
-    "RECARGA"
-)
-
-df_viajes_tipo["CF_FALLIDAS"] = np.where(
-    df_viajes_tipo["ES_FALLIDA"] == True,
-    df_viajes_tipo["CF"],
-    0
-)
-
-tabla_viajes_tipo = (
-    df_viajes_tipo
-    .groupby("TIPO_VIAJE")[["CF", "CF_FALLIDAS"]]
-    .sum()
-    .reset_index()
-)
-
-tabla_viajes_tipo["RECHAZO_%"] = (
-    tabla_viajes_tipo["CF_FALLIDAS"] / tabla_viajes_tipo["CF"]
-) * 100
-
 st.dataframe(tabla_viajes_tipo, use_container_width=False)
