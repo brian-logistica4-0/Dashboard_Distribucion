@@ -214,3 +214,66 @@ with col4:
     st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
     st.subheader("📉 Autorizacion de retorno")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
+
+# ======================
+# 🚛 RECHAZO POR TIPO DE CAMIÓN
+# ======================
+
+st.subheader("🚛 Rechazo por tipo de camión")
+
+df_camion_tipo = df[
+    df["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
+].copy()
+
+df_camion_tipo["CF_FALLIDAS"] = np.where(
+    df_camion_tipo["ES_FALLIDA"] == True,
+    df_camion_tipo["CF"],
+    0
+)
+
+tabla_tipo_camion = (
+    df_camion_tipo
+    .groupby("TIPO_DE_CAMIÓN")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
+
+tabla_tipo_camion["RECHAZO_%"] = (
+    tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"]
+) * 100
+
+st.dataframe(tabla_tipo_camion, use_container_width=False)
+
+
+# ======================
+# 🚚 RECHAZO POR TIPO DE VIAJE
+# ======================
+
+st.subheader("🚚 Rechazo por tipo de viaje")
+
+df_viajes_tipo = df.copy()
+
+df_viajes_tipo["TIPO_VIAJE"] = np.where(
+    df_viajes_tipo["SECUENCIA"] == "1ER VIAJE",
+    "1ER VIAJE",
+    "RECARGA"
+)
+
+df_viajes_tipo["CF_FALLIDAS"] = np.where(
+    df_viajes_tipo["ES_FALLIDA"] == True,
+    df_viajes_tipo["CF"],
+    0
+)
+
+tabla_viajes_tipo = (
+    df_viajes_tipo
+    .groupby("TIPO_VIAJE")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
+
+tabla_viajes_tipo["RECHAZO_%"] = (
+    tabla_viajes_tipo["CF_FALLIDAS"] / tabla_viajes_tipo["CF"]
+) * 100
+
+st.dataframe(tabla_viajes_tipo, use_container_width=False)
