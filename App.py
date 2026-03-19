@@ -39,23 +39,13 @@ df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
 
 df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
 
+# fecha limpia para filtros
+df["FECHA"] = df["FECHA_DE_SALIDA"].dt.date
+
+# agregados útiles
 df["MES"] = df["FECHA_DE_SALIDA"].dt.month_name()
 df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 
-# ======================
-# FILTRO DE FECHA
-# ======================
-fecha_rango = st.sidebar.date_input(
-    "Seleccionar rango de fechas",
-    []
-)
-
-if len(fecha_rango) == 2:
-    inicio, fin = fecha_rango
-    df_filtrado = df_filtrado[
-        (df_filtrado["FECHA_DE_SALIDA"] >= pd.to_datetime(inicio)) &
-        (df_filtrado["FECHA_DE_SALIDA"] <= pd.to_datetime(fin))
-    ]
 # ======================
 # FILTROS AVANZADOS
 # ======================
