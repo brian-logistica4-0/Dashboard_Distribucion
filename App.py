@@ -25,27 +25,8 @@ def cargar_datos():
 df, tabla_cf, tabla_viajes = cargar_datos()
 
 # ======================
-# ZONAS
-# ======================
-gba_norte = ["Vicente López","San Isidro","San Fernando","Tigre","Escobar","Pilar","Malvinas Argentinas","San Miguel","José C. Paz"]
-gba_oeste = ["General San Martín","Tres De Febrero","Morón","Ituzaingó","Hurlingham","La Matanza","Merlo","Moreno"]
-gba_sur = ["Avellaneda","Lanús","Quilmes","Lomas De Zamora","Almirante Brown","Florencio Varela","Berazategui","Ezeiza","Esteban Echeverría","San Vicente","Presidente Perón"]
-
-def clasificar_zona(m):
-    if m == "Ciudad Autónoma de Buenos Aires":
-        return "CABA"
-    elif m in gba_norte:
-        return "GBA Norte"
-    elif m in gba_oeste:
-        return "GBA Oeste"
-    else:
-        return "GBA Sur"
-
-# ======================
 # PREPARACION DATOS
 # ======================
-df["ZONA"] = df["LOCALIDAD"].apply(clasificar_zona)
-
 df["CF_FALLIDAS"] = np.where(df["ES_FALLIDA"], df["CF"], 0)
 
 # ======================
@@ -54,9 +35,7 @@ df["CF_FALLIDAS"] = np.where(df["ES_FALLIDA"], df["CF"], 0)
 st.sidebar.header("Filtros")
 
 anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
-zona = st.sidebar.multiselect("Zona", df["ZONA"].unique(), default=df["ZONA"].unique())
 
-df = df[df["ZONA"].isin(zona)]
 df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
 df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
 
@@ -80,6 +59,7 @@ total_cf = df_cf["CF"].sum()
 # ======================
 col1, col2 = st.columns(2)
 
+# -------- OPERATIVO --------
 with col1:
     st.subheader("📊 Operación")
 
@@ -92,8 +72,9 @@ with col1:
     fig_cf = px.line(df_cf, x="MES", y="RECHAZO_%", markers=True)
     st.plotly_chart(fig_cf, use_container_width=True)
 
+# -------- MAPA PRO --------
 with col2:
-    st.subheader("🗺️ Mapa Inteligente")
+    st.subheader("🗺️ Mapa de Distribución")
 
     df_map = df.dropna(subset=["LATITUD","LONGITUD"])
 
@@ -118,6 +99,7 @@ with col2:
 # ======================
 col3, col4 = st.columns(2)
 
+# -------- PERFORMANCE --------
 with col3:
     st.subheader("🚚 Performance")
 
@@ -140,6 +122,7 @@ with col3:
 
     st.plotly_chart(fig_camion, use_container_width=True)
 
+# -------- RECHAZOS --------
 with col4:
     st.subheader("📉 Rechazos")
 
