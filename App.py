@@ -94,15 +94,9 @@ if semana:
 # CALCULOS
 # ======================
 
-total_cf = df_filtrado["CF"].sum()
-
-cf_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
-
-rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
-
-# viajes (aproximación)
-viajes_total = df_filtrado["ID_VIAJE"].nunique() if "ID_VIAJE" in df_filtrado.columns else len(df_filtrado)
-viajes_fallidos = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["ID_VIAJE"].nunique() if "ID_VIAJE" in df_filtrado.columns else cf_rech
+rechazo_cf = df_cf["RECHAZO_%"].mean()
+rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
+total_cf = df_cf["CF"].sum()
 
 rechazo_viajes = (viajes_fallidos / viajes_total) * 100 if viajes_total > 0 else 0
 df_clientes = df_filtrado.copy()
@@ -158,68 +152,8 @@ tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
 # GRAFICOS
 # ======================
 
-# CF por mes
-tabla_mes_cf = (
-    df_filtrado
-    .groupby("MES")[["CF"]]
-    .sum()
-    .reset_index()
-)
-
-tabla_mes_cf["CF_FALLIDAS"] = (
-    df_filtrado[df_filtrado["ES_FALLIDA"] == True]
-    .groupby("MES")["CF"]
-    .sum()
-    .reset_index(drop=True)
-)
-
-tabla_mes_cf["RECHAZO_%"] = (
-    tabla_mes_cf["CF_FALLIDAS"] / tabla_mes_cf["CF"]
-) * 100
-
-fig_cf = px.bar(tabla_mes_cf, x="MES", y="RECHAZO_%", title="Rechazo CF")
-
-
-# ======================
-# VIAJES (ROBUSTO)
-# ======================
-
-if "ID_VIAJE" in df_filtrado.columns:
-
-    tabla_mes_viajes = (
-        df_filtrado
-        .groupby("MES")["ID_VIAJE"]
-        .nunique()
-        .reset_index(name="VIAJES")
-    )
-
-    viajes_fallidos = (
-        df_filtrado[df_filtrado["ES_FALLIDA"] == True]
-        .groupby("MES")["ID_VIAJE"]
-        .nunique()
-        .reset_index(name="VIAJES_FALLIDOS")
-    )
-
-    tabla_mes_viajes = tabla_mes_viajes.merge(
-        viajes_fallidos, on="MES", how="left"
-    ).fillna(0)
-
-    tabla_mes_viajes["RECHAZO_%"] = (
-        tabla_mes_viajes["VIAJES_FALLIDOS"] / tabla_mes_viajes["VIAJES"]
-    ) * 100
-
-    fig_viajes = px.bar(
-        tabla_mes_viajes,
-        x="MES",
-        y="RECHAZO_%",
-        title="Rechazo Viajes"
-    )
-
-else:
-    # fallback si no existe ID_VIAJE
-    fig_viajes = px.bar(
-        title="Rechazo Viajes (sin ID_VIAJE disponible)"
-    )
+fig_cf = px.bar(df_cf, x="MES", y="RECHAZO_%", title="Rechazo CF")
+fig_viajes = px.bar(df_viajes, x="MES", y="RECHAZO_%_VIAJES", title="Rechazo Viajes")
 
 # ======================
 # MAPA
