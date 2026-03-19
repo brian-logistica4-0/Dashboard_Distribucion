@@ -70,12 +70,17 @@ if mes:
     df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
 
 # DIA
-dia = st.sidebar.multiselect(
-    "Día",
-    df["DIA"].dropna().unique()
+fecha_rango = st.sidebar.date_input(
+    "Rango de fechas",
+    []
 )
-if dia:
-    df_filtrado = df_filtrado[df_filtrado["DIA"].isin(dia)]
+
+if len(fecha_rango) == 2:
+    inicio, fin = fecha_rango
+    df_filtrado = df_filtrado[
+        (df_filtrado["FECHA_DE_SALIDA"] >= pd.to_datetime(inicio)) &
+        (df_filtrado["FECHA_DE_SALIDA"] <= pd.to_datetime(fin))
+    ]
 
 # SEMANA
 semana = st.sidebar.multiselect(
