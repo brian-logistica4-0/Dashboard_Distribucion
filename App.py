@@ -201,7 +201,7 @@ with col2:
 # ======================
 # 🟩 FILA 2
 # ======================
-col3, col4 = st.columns([1,2])
+col3, col4 = st.columns(2)
 
 with col3:
     st.subheader("🚚 Rechazo por interno")
@@ -211,6 +211,6 @@ with col3:
 
 with col4:
     st.subheader("📉 Análisis de Rechazos")
-    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=False)
+    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
     st.subheader("📉 Autorizacion de retorno")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
