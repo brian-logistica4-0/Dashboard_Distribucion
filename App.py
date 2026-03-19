@@ -209,4 +209,5 @@ with col3:
 with col4:
     st.subheader("📉 Análisis de Rechazos")
     st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.subheader("📉 Análisis de Rechazos2")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
