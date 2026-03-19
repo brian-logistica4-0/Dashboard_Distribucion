@@ -138,7 +138,7 @@ st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10
 # 🟪 AUTORIZACION
 # ======================
 
-st.subheader("⚠️ Causas de Rechazo")
+st.subheader("⚠️ AUTORIZACION DE RETORNO")
 
 df_aut = df[df["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
 
@@ -155,35 +155,117 @@ tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
 st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False))
 
 # ======================
-# 🗺️ MAPA MEJORADO (TU FORMATO)
+# 🗺️ MAPA ZONAS + CLIENTES (FORMATO JUPYTER)
 # ======================
 
-st.subheader("🗺️ Mapa de Clientes")
+import json
+import plotly.graph_objects as go
 
-df_map = df.copy()
+st.subheader("🗺️ Mapa de Clientes por Zona")
 
-# limpieza segura
-df_map["LATITUD"] = pd.to_numeric(df_map["LATITUD"], errors="coerce")
-df_map["LONGITUD"] = pd.to_numeric(df_map["LONGITUD"], errors="coerce")
-df_map["CF"] = pd.to_numeric(df_map["CF"], errors="coerce")
+# ======================
+# GEOJSON
+# ======================
+with open("amba.geojson", "r", encoding="utf-8") as f:
+    geo_amba = json.load(f)
 
-df_map["CF_FALLIDAS"] = np.where(df_map["ES_FALLIDA"], df_map["CF"], 0)
+# ======================
+# ZONAS
+# ======================
+gba_norte = ["Vicente López","San Isidro","San Fernando","Tigre","Escobar","Pilar","Malvinas Argentinas","San Miguel","José C. Paz"]
+gba_oeste = ["General San Martín","Tres De Febrero","Morón","Ituzaingó","Hurlingham","La Matanza","Merlo","Moreno"]
+gba_sur = ["Avellaneda","Lanús","Quilmes","Lomas De Zamora","Almirante Brown","Florencio Varela","Berazategui","Ezeiza","Esteban Echeverría","San Vicente","Presidente Perón"]
 
-df_map = df_map.dropna(subset=["LATITUD", "LONGITUD"])
-df_map = df_map[df_map["CF"] > 0]
+municipios_amba = ["Ciudad Autónoma de Buenos Aires"] + gba_norte + gba_oeste + gba_sur
 
-fig_map = px.scatter_mapbox(
-    df_map,
-    lat="LATITUD",
-    lon="LONGITUD",
-    size="CF",                     # tamaño = volumen
-    color="CF_FALLIDAS",          # color = rechazo
-    color_continuous_scale="Reds",
-    hover_name="CLIENTE",
-    zoom=9,
-    height=600
+# ======================
+# FILTRAR GEOJSON
+# ======================
+features_filtradas = [
+    f for f in geo_amba["features"]
+    if f["properties"]["name"] in municipios_amba
+]
+
+geo_amba_filtrado = {
+    "type": "FeatureCollection",
+    "features": features_filtradas
+}
+
+# ======================
+# DATAFRAME ZONAS
+# ======================
+df_geo = pd.DataFrame({"municipio": municipios_amba})
+
+def clasificar(m):
+    if m == "Ciudad Autónoma de Buenos Aires":
+        return "CABA"
+    elif m in gba_norte:
+        return "GBA Norte"
+    elif m in gba_oeste:
+        return "GBA Oeste"
+    else:
+        return "GBA Sur"
+
+df_geo["zona"] = df_geo["municipio"].apply(clasificar)
+
+color_map = {
+    "CABA": "#C62828",
+    "GBA Norte": "#1565C0",
+    "GBA Oeste": "#2E7D32",
+    "GBA Sur": "#6A1B9A"
+}
+
+# ======================
+# CLIENTES
+# ======================
+df_map = df.dropna(subset=["LATITUD", "LONGITUD"]).copy()
+
+# ======================
+# MAPA BASE (ZONAS)
+# ======================
+fig = px.choropleth_mapbox(
+    df_geo,
+    geojson=geo_amba_filtrado,
+    locations="municipio",
+    featureidkey="properties.name",
+    color="zona",
+    color_discrete_map=color_map,
+    opacity=0.4,
+    center={"lat": -34.6, "lon": -58.45},
+    zoom=8,
+    height=700
 )
 
-fig_map.update_layout(mapbox_style="carto-positron")
+# ======================
+# CLIENTES (PUNTOS NEGROS)
+# ======================
+fig.add_trace(go.Scattermapbox(
+    lat=df_map["LATITUD"],
+    lon=df_map["LONGITUD"],
+    mode="markers",
+    marker=dict(size=7, color="black"),
+    text=df_map["CLIENTE"],
+    name="Clientes"
+))
 
-st.plotly_chart(fig_map, use_container_width=True)
+# ======================
+# ETIQUETAS GRANDES (OPCIONAL)
+# ======================
+fig.add_trace(go.Scattermapbox(
+    lat=[-34.45],
+    lon=[-58.55],
+    text=["NORTE"],
+    mode="text",
+    textfont=dict(size=18, color="red"),
+    showlegend=False
+))
+
+# ======================
+# ESTILO FINAL
+# ======================
+fig.update_layout(
+    mapbox_style="carto-positron",
+    legend_title="Zona"
+)
+
+st.plotly_chart(fig, use_container_width=True)
