@@ -32,49 +32,55 @@ anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
 df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
 df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
+
+# ======================
+# CAMPOS DE TIEMPO
+# ======================
+
+df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
+
+df["MES"] = df["FECHA_DE_SALIDA"].dt.month_name()
+df["DIA"] = df["FECHA_DE_SALIDA"].dt.day_name()
+df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
+
 # ======================
 # FILTROS AVANZADOS
 # ======================
 
-formato = st.sidebar.multiselect(
-    "Formato de Cliente",
-    df["FORMATO_CADENA"].dropna().unique()
-)
+df_filtrado = df.copy()
 
+# FORMATO
+if "FORMATO_CADENA" in df.columns:
+    formato = st.sidebar.multiselect(
+        "Formato de Cliente",
+        df["FORMATO_CADENA"].dropna().unique()
+    )
+    if formato:
+        df_filtrado = df_filtrado[df_filtrado["FORMATO_CADENA"].isin(formato)]
+
+# MES
 mes = st.sidebar.multiselect(
     "Mes",
     df["MES"].dropna().unique()
 )
+if mes:
+    df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
 
+# DIA
 dia = st.sidebar.multiselect(
     "Día",
     df["DIA"].dropna().unique()
 )
-
-semana = st.sidebar.multiselect(
-    "Semana",
-    df["SEMANA"].dropna().unique()
-)
-
-# ======================
-# APLICAR FILTROS
-# ======================
-
-df_filtrado = df.copy()
-
-if formato:
-    df_filtrado = df_filtrado[df_filtrado["FORMATO_CADENA"].isin(formato)]
-
-if mes:
-    df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
-
 if dia:
     df_filtrado = df_filtrado[df_filtrado["DIA"].isin(dia)]
 
+# SEMANA
+semana = st.sidebar.multiselect(
+    "Semana",
+    sorted(df["SEMANA"].dropna().unique())
+)
 if semana:
     df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
-
-
 # ======================
 # CALCULOS
 # ======================
