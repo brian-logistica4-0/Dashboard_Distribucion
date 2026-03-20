@@ -412,6 +412,7 @@ fig_map.add_trace(go.Scattermapbox(
         "<extra></extra>",
     name="Clientes"
 ))
+df_map["OBSERVACIONES_y"] = df_map["OBSERVACIONES_y"].fillna("Sin observaciones")
 
 fig_map.update_layout(
     mapbox_style="carto-positron",
