@@ -280,7 +280,7 @@ tabla_viajes = (
     df_filtrado
     .groupby("MES")
     .agg(
-        VIAJES=("CAMION_U", "count"),
+        VIAJES=("CAMIÓN", "count"),
         VIAJES_FALLIDOS=("ES_FALLIDA", "sum")
     )
     .reset_index()
