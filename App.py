@@ -8,7 +8,7 @@ import plotly.express as px
 # ======================
 st.set_page_config(page_title="Dashboard Logístico", layout="wide")
 
-st.title("📦 Dashboard Logístico - Rechazo")
+st.title("📦 Dashboard de Distribución - Rechazo Logístico")
 
 # ======================
 # CARGA DATOS
@@ -425,7 +425,7 @@ fig_map.update_layout(
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("📊 Dashboard Operativo")
+    st.subheader("📊 Evolución interanual (2022–2025)")
 
     # 🔹 FILA 1 (3 columnas)
     c1, c2, c3 = st.columns(3)
