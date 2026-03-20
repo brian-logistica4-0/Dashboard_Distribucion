@@ -429,7 +429,7 @@ with col1:
     g1.plotly_chart(fig_cf, use_container_width=True)
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
-    st.subheader("Top Clientes - Rechazos")
+    st.subheader(" 🏪 Top Clientes - Rechazos")
     st.dataframe(top_clientes, use_container_width=True)
 
 with col2:
