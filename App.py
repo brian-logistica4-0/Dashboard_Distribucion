@@ -444,7 +444,16 @@ with col1:
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
     st.subheader(" 🏪 Top Clientes - Rechazos")
-    st.dataframe(top_clientes, use_container_width=True)
+ st.dataframe(
+    top_clientes.style
+    .background_gradient(subset=["RECHAZO_%"], cmap="Reds")
+    .format({
+        "RECHAZO_%": "{:.2f}%",
+        "CF": "{:,.0f}",
+        "CF_FALLIDAS": "{:,.0f}"
+    }),
+    use_container_width=True
+)
 
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
