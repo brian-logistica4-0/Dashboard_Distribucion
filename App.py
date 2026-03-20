@@ -51,6 +51,17 @@ df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 
 df_filtrado = df.copy()
 
+if len(fecha_rango) == 2:
+    inicio, fin = fecha_rango
+
+    inicio = pd.to_datetime(inicio)
+    fin = pd.to_datetime(fin) + pd.Timedelta(days=1)
+
+    df_filtrado = df_filtrado[
+        (df_filtrado["FECHA_DE_SALIDA"] >= inicio) &
+        (df_filtrado["FECHA_DE_SALIDA"] < fin)
+    ]
+
 # FORMATO
 if "FORMATO_CADENA" in df.columns:
     formato = st.sidebar.multiselect(
@@ -77,16 +88,6 @@ fecha_rango = st.sidebar.date_input(
     [fecha_min, fecha_max]
 )
 
-if len(fecha_rango) == 2:
-    inicio, fin = fecha_rango
-
-    inicio = pd.to_datetime(inicio)
-    fin = pd.to_datetime(fin) + pd.Timedelta(days=1)  # incluye el día completo
-
-    df_filtrado = df_filtrado[
-        (df_filtrado["FECHA_DE_SALIDA"] >= inicio) &
-        (df_filtrado["FECHA_DE_SALIDA"] < fin)
-    ]
 # SEMANA
 semana = st.sidebar.multiselect(
     "Semana",
