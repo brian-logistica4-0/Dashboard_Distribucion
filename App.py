@@ -51,19 +51,65 @@ df["DIA"] = df["FECHA_DE_SALIDA"].dt.day
 # FILTROS AVANZADOS
 # ======================
 
-# ======================
-# FILTRO DE FECHA (FLEXIBLE)
-# ======================
+df_filtrado = df.copy()
 
+# ----------------------
+# AÑO
+# ----------------------
+anios = st.sidebar.multiselect(
+    "Año",
+    sorted(df["AÑO"].dropna().unique())
+)
+
+if anios:
+    df_filtrado = df_filtrado[df_filtrado["AÑO"].isin(anios)]
+
+# ----------------------
+# MES
+# ----------------------
+meses = st.sidebar.multiselect(
+    "Mes",
+    sorted(
+        df["MES"].dropna().unique(),
+        key=lambda x: list(orden_meses).index(x)
+    )
+)
+
+if meses:
+    df_filtrado = df_filtrado[df_filtrado["MES"].isin(meses)]
+
+# ----------------------
+# SEMANA
+# ----------------------
+semanas = st.sidebar.multiselect(
+    "Semana",
+    sorted(df["SEMANA"].dropna().unique())
+)
+
+if semanas:
+    df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semanas)]
+
+# ----------------------
+# DIA
+# ----------------------
+dias = st.sidebar.multiselect(
+    "Día",
+    sorted(df["DIA"].dropna().unique())
+)
+
+if dias:
+    df_filtrado = df_filtrado[df_filtrado["DIA"].isin(dias)]
+
+# ----------------------
+# RANGO DE FECHAS (OPCIONAL)
+# ----------------------
 fecha_min = df["FECHA_DE_SALIDA"].min().date()
 fecha_max = df["FECHA_DE_SALIDA"].max().date()
 
 fecha_rango = st.sidebar.date_input(
-    "Seleccionar rango de fechas",
+    "Rango de fechas (opcional)",
     value=(fecha_min, fecha_max)
 )
-
-df_filtrado = df.copy()
 
 if isinstance(fecha_rango, tuple) and len(fecha_rango) == 2:
     inicio, fin = fecha_rango
