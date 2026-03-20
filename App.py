@@ -193,7 +193,6 @@ tabla_chofer = (
 )
 
 tabla_chofer["RECHAZO_%"] = tabla_chofer["CF_FALLIDAS"] / tabla_chofer["CF"] * 100
-tabla_chofer = tabla_chofer[tabla_chofer["CF"] > 1000]
 
 # ======================
 # CADENA
