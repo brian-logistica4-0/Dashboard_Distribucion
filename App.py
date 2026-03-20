@@ -28,12 +28,7 @@ df, tabla_cf, tabla_viajes = cargar_datos()
 # ======================
 df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
 st.sidebar.header("Filtros")
-anio = st.sidebar.selectbox("Año", sorted(tabla_cf["AÑO"].unique()))
 
-df_cf = tabla_cf[tabla_cf["AÑO"] == anio]
-df_viajes = tabla_viajes[tabla_viajes["AÑO"] == anio]
-
-df = df[df["FECHA_DE_SALIDA"].dt.year == anio]
 
 # ======================
 # CAMPOS DE TIEMPO
@@ -74,18 +69,24 @@ if mes:
     df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
 
 # DIA
+fecha_min = df["FECHA_DE_SALIDA"].min().date()
+fecha_max = df["FECHA_DE_SALIDA"].max().date()
+
 fecha_rango = st.sidebar.date_input(
     "Rango de fechas",
-    []
+    [fecha_min, fecha_max]
 )
 
 if len(fecha_rango) == 2:
     inicio, fin = fecha_rango
-    df_filtrado = df_filtrado[
-        (df_filtrado["FECHA_DE_SALIDA"] >= pd.to_datetime(inicio)) &
-        (df_filtrado["FECHA_DE_SALIDA"] <= pd.to_datetime(fin))
-    ]
 
+    inicio = pd.to_datetime(inicio)
+    fin = pd.to_datetime(fin) + pd.Timedelta(days=1)  # incluye el día completo
+
+    df_filtrado = df_filtrado[
+        (df_filtrado["FECHA_DE_SALIDA"] >= inicio) &
+        (df_filtrado["FECHA_DE_SALIDA"] < fin)
+    ]
 # SEMANA
 semana = st.sidebar.multiselect(
     "Semana",
