@@ -394,10 +394,11 @@ with col1:
     st.subheader("📊 Dashboard Operativo")
 
     k1, k2, k3, k4, k5 = st.columns(5)
-    k1.metric("📦 Cajas Totales", f"{int(total_cf):,}")
+    k1.metric("📦 Cajas Movilizadas", f"{int(total_cf):,}")
     k2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
-    k2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
-    k3.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}")
+    k3.metric("🚚 Viajes Movilizados", f"{int(total_viajes):,}")
+     k2.metric("❌ Viajes Rechazados", f"{int(viajes_rech):,}")
+    k4.metric("📉 % Rechazo Cajas", f"{rechazo_cf:.2f}%")
     k5.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
 
