@@ -137,6 +137,12 @@ if "FORMATO_CADENA" in df.columns:
 # CALCULOS
 # ======================
 
+# 🔴 NORMALIZAR ES_FALLIDA (CLAVE)
+df["ES_FALLIDA"] = df["ES_FALLIDA"].astype(str).str.upper().isin(["TRUE", "1", "SI"])
+
+# 🔴 CREAR CF FALLIDAS (GLOBAL)
+df["CF_FALLIDAS"] = np.where(df["ES_FALLIDA"], df["CF"], 0)
+
 # TOTAL CAJAS
 total_cf = df_filtrado["CF"].sum()
 
@@ -182,6 +188,8 @@ tabla_camion = (
 )
 
 tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
+
+tabla_camion = tabla_camion.sort_values("CF", ascending=False)
 
 # ======================
 # CHOFER
