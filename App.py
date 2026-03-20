@@ -212,7 +212,7 @@ fig_cf.update_layout(
 
 fig_cf.update_xaxes(showgrid=False)
 fig_cf.update_yaxes(showgrid=False)
-
+fig_cf.update_yaxes(visible=False)
 
 # ======================
 # VIAJES POR MES (SIMPLIFICADO)
@@ -275,6 +275,7 @@ fig_viajes.update_layout(
 
 fig_viajes.update_xaxes(showgrid=False)
 fig_viajes.update_yaxes(showgrid=False)
+fig_viajes.update_yaxes(visible=False)
 
 # ======================
 # MAPA
