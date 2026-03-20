@@ -48,6 +48,14 @@ df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 # ======================
 # FILTROS AVANZADOS
 # ======================
+# DIA
+fecha_min = df["FECHA_DE_SALIDA"].min().date()
+fecha_max = df["FECHA_DE_SALIDA"].max().date()
+
+fecha_rango = st.sidebar.date_input(
+    "Rango de fechas",
+    [fecha_min, fecha_max]
+)
 
 df_filtrado = df.copy()
 
@@ -74,24 +82,15 @@ if "FORMATO_CADENA" in df.columns:
 # MES
 mes = st.sidebar.multiselect(
     "Mes",
-    df["MES"].dropna().unique()
+    df_filtrado["MES"].dropna().unique()
 )
 if mes:
     df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
 
-# DIA
-fecha_min = df["FECHA_DE_SALIDA"].min().date()
-fecha_max = df["FECHA_DE_SALIDA"].max().date()
-
-fecha_rango = st.sidebar.date_input(
-    "Rango de fechas",
-    [fecha_min, fecha_max]
-)
-
 # SEMANA
 semana = st.sidebar.multiselect(
     "Semana",
-    sorted(df["SEMANA"].dropna().unique())
+    sorted(df_filtrado["SEMANA"].dropna().unique())
 )
 if semana:
     df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
