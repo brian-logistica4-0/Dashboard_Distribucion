@@ -55,8 +55,6 @@ df["DIA"] = df["FECHA_DE_SALIDA"].dt.day
 
 df_filtrado = df.copy()
 
-if cliente_seleccionado != "Todos":
-    df_filtrado = df_filtrado[df_filtrado["CLIENTE"] == cliente_seleccionado]
 # ----------------------
 # AÑO
 # ----------------------
@@ -67,6 +65,11 @@ cliente_seleccionado = st.sidebar.selectbox(
     "Seleccionar cliente",
     ["Todos"] + sorted(df["CLIENTE"].dropna().unique())
 )
+
+df_filtrado = df.copy()
+
+if cliente_seleccionado != "Todos":
+    df_filtrado = df_filtrado[df_filtrado["CLIENTE"] == cliente_seleccionado]
 
 # ----------------------
 # AÑO
