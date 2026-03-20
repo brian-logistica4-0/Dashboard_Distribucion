@@ -454,17 +454,58 @@ with col4:
 # ======================
 # 🚛 RECHAZO POR TIPO DE CAMIÓN
 # ======================
+
 st.subheader("🚛 Rechazo por tipo de camión")
 
-df_camion_tipo = df_filtrado[ df_filtrado["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"]) ].copy()
+df_camion_tipo = df_filtrado.copy()
 
-df_camion_tipo["CF_FALLIDAS"] = np.where( df_camion_tipo["ES_FALLIDA"] == True, df_camion_tipo["CF"], 0 )
+# 🔴 MAPA CAMION → TIPO
+mapa_camion_tipo = (
+    df_camion_tipo
+    .dropna(subset=["TIPO_DE_CAMIÓN"])
+    .groupby("CAMION")["TIPO_DE_CAMIÓN"]
+    .agg(lambda x: x.mode()[0] if not x.mode().empty else None)
+)
 
-tabla_tipo_camion = ( df_camion_tipo .groupby("TIPO_DE_CAMIÓN")[["CF", "CF_FALLIDAS"]] .sum() .reset_index() )
+# 🔴 COMPLETAR VACÍOS
+df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo.apply(
+    lambda row: mapa_camion_tipo.get(row["CAMION"], None)
+    if pd.isna(row["TIPO_DE_CAMIÓN"])
+    else row["TIPO_DE_CAMIÓN"],
+    axis=1
+)
 
-tabla_tipo_camion["RECHAZO_%"] = ( tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"] ) * 100
+# 🔴 FILTRAR SOLO CHASIS / SEMI
+df_camion_tipo = df_camion_tipo[
+    df_camion_tipo["TIPO_CAMION_OK"].isin(["Chasis", "Semi"])
+]
+
+# 🔴 CALCULO
+df_camion_tipo["CF_FALLIDAS"] = np.where(
+    df_camion_tipo["ES_FALLIDA"],
+    df_camion_tipo["CF"],
+    0
+)
+
+tabla_tipo_camion = (
+    df_camion_tipo
+    .groupby("TIPO_CAMION_OK")[["CF", "CF_FALLIDAS"]]
+    .sum()
+    .reset_index()
+)
+
+tabla_tipo_camion["RECHAZO_%"] = (
+    tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"]
+) * 100
 
 st.dataframe(tabla_tipo_camion, use_container_width=False)
+
+#st.subheader("🚛 Rechazo por tipo de camión")
+#df_camion_tipo = df_filtrado[ df_filtrado["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"]) ].copy()
+#df_camion_tipo["CF_FALLIDAS"] = np.where( df_camion_tipo["ES_FALLIDA"] == True, df_camion_tipo["CF"], 0 )
+#tabla_tipo_camion = ( df_camion_tipo .groupby("TIPO_DE_CAMIÓN")[["CF", "CF_FALLIDAS"]] .sum() .reset_index() )
+#tabla_tipo_camion["RECHAZO_%"] = ( tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"] ) * 100
+#st.dataframe(tabla_tipo_camion, use_container_width=False)
 
 # ======================
 # 🚚 RECHAZO POR TIPO DE VIAJE
