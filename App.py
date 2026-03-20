@@ -105,7 +105,7 @@ rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
 
 df_filtrado["VIAJE_ID"] = (
     df_filtrado["CAMION_U"].astype(str) + "_" +
-    df_filtrado["FECHA_DE_SALIDA"].astype(str)
+    df_filtrado["FECHA_DE_SALIDA"].dt.date.astype(str)
 )
 
 viajes_total = df_filtrado["VIAJE_ID"].nunique()
