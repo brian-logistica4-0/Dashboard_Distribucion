@@ -136,9 +136,6 @@ if "FORMATO_CADENA" in df.columns:
 # ======================
 # CALCULOS
 # ======================
-# ======================
-# CALCULOS CORRECTOS
-# ======================
 
 # TOTAL CAJAS
 total_cf = df_filtrado["CF"].sum()
@@ -153,23 +150,15 @@ rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
 # ======================
 # VIAJES
 # ======================
-
-# ID de viaje
-df_filtrado["VIAJE_ID"] = (
-    df_filtrado["CAMION_U"].astype(str) + "_" +
-    df_filtrado["FECHA_DE_SALIDA"].dt.date.astype(str)
-)
-
 # TOTAL VIAJES
-viajes_total = df_filtrado["VIAJE_ID"].nunique()
+viajes_total = len(df_filtrado)
 
-# VIAJES CON FALLA
-viajes_rech = df_filtrado[
-    df_filtrado["ES_FALLIDA"] == True
-]["VIAJE_ID"].nunique()
+# VIAJES FALLIDOS
+viajes_rech = df_filtrado["ES_FALLIDA"].sum()
 
 # % RECHAZO VIAJES
 rechazo_viajes = (viajes_rech / viajes_total) * 100 if viajes_total > 0 else 0
+
 
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
@@ -269,37 +258,18 @@ fig_cf.update_yaxes(showgrid=False)
 fig_cf.update_yaxes(visible=False)
 
 # ======================
-# VIAJES POR MES (SIMPLIFICADO)
+# VIAJES POR MES
 # ======================
 
-df_viajes_calc = df_filtrado.copy()
-
-df_viajes_calc["VIAJE_ID"] = (
-    df_viajes_calc["CAMION_U"].astype(str) + "_" +
-    df_viajes_calc["FECHA_DE_SALIDA"].dt.date.astype(str)
-)
-
 tabla_viajes = (
-    df_viajes_calc
-    .groupby(["MES", "VIAJE_ID"])
-    .size()
-    .reset_index()
+    df_filtrado
     .groupby("MES")
-    .size()
-    .reset_index(name="VIAJES")
-)
-
-viajes_fallidos = (
-    df_viajes_calc[df_viajes_calc["ES_FALLIDA"] == True]
-    .groupby(["MES", "VIAJE_ID"])
-    .size()
+    .agg(
+        VIAJES=("CAMION_U", "count"),
+        VIAJES_FALLIDOS=("ES_FALLIDA", "sum")
+    )
     .reset_index()
-    .groupby("MES")
-    .size()
-    .reset_index(name="VIAJES_FALLIDOS")
 )
-
-tabla_viajes = tabla_viajes.merge(viajes_fallidos, on="MES", how="left").fillna(0)
 
 tabla_viajes["RECHAZO_%"] = (
     tabla_viajes["VIAJES_FALLIDOS"] / tabla_viajes["VIAJES"]
