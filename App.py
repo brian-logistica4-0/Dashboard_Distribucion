@@ -446,12 +446,6 @@ with col1:
     st.subheader(" 🏪 Top Clientes - Rechazos")
     st.dataframe(top_clientes, use_container_width=True)
 
-st.dataframe(
-    top_clientes.style
-    .applymap(color_rechazo, subset=["RECHAZO_%"])
-    .format({"RECHAZO_%": "{:.2f}%"}),
-    use_container_width=True
-)
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
     st.subheader("Geografia - Caracteristicas")
