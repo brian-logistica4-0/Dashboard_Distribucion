@@ -189,7 +189,6 @@ tabla_camion = (
 
 tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
 
-tabla_camion = tabla_camion.sort_values("CF", ascending=False)
 
 # ======================
 # CHOFER
