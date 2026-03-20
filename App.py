@@ -403,7 +403,7 @@ fig_map.add_trace(go.Scattermapbox(
     mode="markers",
     marker=dict(size=8, color="black"),
     text=df_map["CLIENTE"],
-    customdata=df_map[["HORARIO", "TIPO DE CAMIÓN", "OBSERVACIONES_y"]].values,
+    customdata=df_map[["HORARIO", "TIPO DE CAMION", "OBSERVACIONES_y"]].values,
     hovertemplate=
         "<b>%{text}</b><br><br>" +
         "🕒 Horario: %{customdata[0]}<br>" +
