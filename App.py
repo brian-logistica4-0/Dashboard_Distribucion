@@ -420,40 +420,62 @@ fig_map.update_layout(
 )
 
 # ======================
-# 🟦 FILA 1
+# LAYOUT PRINCIPAL
 # ======================
-col1, col2 = st.columns(2)
 
-with col1:
+col_left, col_right = st.columns([1.2, 1])
+
+# ======================
+# IZQUIERDA (2 FILAS)
+# ======================
+
+with col_left:
     st.subheader("📊 Dashboard Operativo")
 
-    # 🔹 FILA 1 (3 columnas)
+    # KPIs
     c1, c2, c3 = st.columns(3)
-
     c1.metric("📦 Cajas Totales", f"{int(total_cf):,}")
     c2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
     c3.metric("📉 % Rechazo Cajas", f"{rechazo_cf:.2f}%")
 
-    # 🔹 FILA 2 (3 columnas)
     c4, c5, c6 = st.columns(3)
-
     c4.metric("🚚 Viajes Movilizados", f"{int(viajes_total):,}")
     c5.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}")
     c6.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
+    # Gráficos
     g1, g2 = st.columns(2)
     g1.plotly_chart(fig_cf, use_container_width=True)
     g2.plotly_chart(fig_viajes, use_container_width=True)
-    
-    st.subheader(" 🏪 Top Clientes - Rechazos")
+
+    # Tabla
+    st.subheader("🏪 Top Clientes - Rechazos")
     st.dataframe(top_clientes, use_container_width=True)
 
-st.subheader("🗺️ Mapa de Distribución")
-st.caption("Geografía - Características")
+    # Segunda fila izquierda
+    st.subheader("🚚 Rechazo por interno")
+    st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
 
-fig_map.update_layout(height=900)
+    st.subheader("🚚 Rechazo por chofer")
+    st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
 
-st.plotly_chart(fig_map, use_container_width=True)
+    st.subheader("📉 Analisis por cadenas")
+    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
+
+    st.subheader("📉 Autorizacion de retorno")
+    st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
+
+# ======================
+# DERECHA (MAPA GRANDE)
+# ======================
+
+with col_right:
+    st.subheader("🗺️ Mapa de Distribución")
+    st.caption("Geografía - Características")
+
+    fig_map.update_layout(height=1200)
+
+    st.plotly_chart(fig_map, use_container_width=True)
 
 # ======================
 # 🟩 FILA 2
