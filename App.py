@@ -457,19 +457,20 @@ with col4:
 
 st.subheader("🚛 Rechazo por tipo de camión")
 
-df_camion_tipo = df_filtrado[
-    df_filtrado["TIPO_DE_CAMIÓN"].isin(["Chasis", "Semi"])
-].copy()
+df_camion_tipo = df_filtrado.copy()
+
+# Clasificación segura (NO pierde datos)
+df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo["TIPO_DE_CAMIÓN"].fillna("OTROS")
 
 df_camion_tipo["CF_FALLIDAS"] = np.where(
-    df_camion_tipo["ES_FALLIDA"] == True,
+    df_camion_tipo["ES_FALLIDA"],
     df_camion_tipo["CF"],
     0
 )
 
 tabla_tipo_camion = (
     df_camion_tipo
-    .groupby("TIPO_DE_CAMIÓN")[["CF", "CF_FALLIDAS"]]
+    .groupby("TIPO_CAMION_OK")[["CF", "CF_FALLIDAS"]]
     .sum()
     .reset_index()
 )
@@ -479,7 +480,6 @@ tabla_tipo_camion["RECHAZO_%"] = (
 ) * 100
 
 st.dataframe(tabla_tipo_camion, use_container_width=False)
-
 
 # ======================
 # 🚚 RECHAZO POR TIPO DE VIAJE
