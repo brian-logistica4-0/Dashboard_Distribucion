@@ -398,13 +398,13 @@ with col1:
 
     c1.metric("📦 Cajas Totales", f"{int(total_cf):,}")
     c2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
-    c3.metric("🚚 Viajes Movilizados", f"{int(viajes_total):,}")
+    c5.metric("📉 % Rechazo Cajas", f"{rechazo_cf:.2f}%")
 
     # 🔹 FILA 2 (3 columnas)
     c4, c5, c6 = st.columns(3)
 
+    c3.metric("🚚 Viajes Movilizados", f"{int(viajes_total):,}")
     c4.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}")
-    c5.metric("📉 % Rechazo Cajas", f"{rechazo_cf:.2f}%")
     c6.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
     g1, g2 = st.columns(2)
