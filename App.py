@@ -159,7 +159,9 @@ viajes_rech = df_filtrado["ES_FALLIDA"].sum()
 # % RECHAZO VIAJES
 rechazo_viajes = (viajes_rech / viajes_total) * 100 if viajes_total > 0 else 0
 
-
+# ======================
+# CLIENTES
+# ======================
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 tabla_clientes = (
@@ -170,6 +172,9 @@ tabla_clientes = (
 
 top_clientes = tabla_clientes.sort_values("CF_FALLIDAS", ascending=False).head(10)
 
+# ======================
+# CAMION
+# ======================
 tabla_camion = (
     df_clientes.groupby("CAMION_U")[["CF", "CF_FALLIDAS"]]
     .sum()
@@ -177,8 +182,10 @@ tabla_camion = (
 )
 
 tabla_camion["RECHAZO_%"] = tabla_camion["CF_FALLIDAS"] / tabla_camion["CF"] * 100
-tabla_camion = tabla_camion[tabla_camion["CF"] > 1000]
 
+# ======================
+# CHOFER
+# ======================
 tabla_chofer = (
     df_clientes.groupby("CHOFER")[["CF", "CF_FALLIDAS"]]
     .sum()
@@ -187,6 +194,10 @@ tabla_chofer = (
 
 tabla_chofer["RECHAZO_%"] = tabla_chofer["CF_FALLIDAS"] / tabla_chofer["CF"] * 100
 tabla_chofer = tabla_chofer[tabla_chofer["CF"] > 1000]
+
+# ======================
+# CADENA
+# ======================
 
 tabla_cadena = (
     df_clientes.groupby("CADENA2")[["CF", "CF_FALLIDAS"]]
@@ -197,6 +208,9 @@ tabla_cadena = (
 total = tabla_cadena["CF_FALLIDAS"].sum()
 tabla_cadena["PART_RECHAZO_%"] = tabla_cadena["CF_FALLIDAS"] / total * 100
 
+# ======================
+# AUTORIZACION
+# ======================
 df_aut = df_filtrado[df_filtrado["AUTORIZADO_?"].isin(["CHOFER", "DISTRIBUCION", "GREMIO"])]
 
 tabla_aut = (
