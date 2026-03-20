@@ -393,10 +393,13 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("📊 Dashboard Operativo")
 
-    k1, k2, k3 = st.columns(3)
-    k1.metric("📦 Cajas Movilizadas", f"{int(total_cf):,}")
-    k2.metric("❌ Rechazo CF", f"{rechazo_cf:.2f}%")
-    k3.metric("🚚 Rechazo Viajes", f"{rechazo_viajes:.2f}%")
+    k1, k2, k3, k4, k5 = st.columns(5)
+    k1.metric("📦 Cajas Totales", f"{int(total_cf):,}")
+    k2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
+    k2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
+    k3.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}")
+    k5.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
+
 
     g1, g2 = st.columns(2)
     g1.plotly_chart(fig_cf, use_container_width=True)
