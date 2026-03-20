@@ -45,6 +45,7 @@ df["FECHA"] = df["FECHA_DE_SALIDA"].dt.date
 # agregados útiles
 df["MES_NUM"] = df["FECHA_DE_SALIDA"].dt.month
 df["MES"] = df["FECHA_DE_SALIDA"].dt.strftime("%b")
+
 orden_meses = df.sort_values("MES_NUM")["MES"].unique()df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 
 df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
