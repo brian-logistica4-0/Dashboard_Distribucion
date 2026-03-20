@@ -196,11 +196,55 @@ fig_cf = px.bar(
     category_orders={"MES": list(orden_meses)}
 )
 
+# ======================
+# VIAJES POR MES (SIMPLIFICADO)
+# ======================
+
+df_viajes_calc = df_filtrado.copy()
+
+# ID de viaje
+df_viajes_calc["VIAJE_ID"] = (
+    df_viajes_calc["CAMION_U"].astype(str) + "_" +
+    df_viajes_calc["FECHA_DE_SALIDA"].dt.date.astype(str)
+)
+
+# total viajes por mes
+tabla_viajes = (
+    df_viajes_calc
+    .groupby(["MES", "VIAJE_ID"])
+    .size()
+    .reset_index()
+    .groupby("MES")
+    .size()
+    .reset_index(name="VIAJES")
+)
+
+# viajes fallidos (al menos una falla en el viaje)
+viajes_fallidos = (
+    df_viajes_calc[df_viajes_calc["ES_FALLIDA"] == True]
+    .groupby(["MES", "VIAJE_ID"])
+    .size()
+    .reset_index()
+    .groupby("MES")
+    .size()
+    .reset_index(name="VIAJES_FALLIDOS")
+)
+
+# merge
+tabla_viajes = tabla_viajes.merge(viajes_fallidos, on="MES", how="left").fillna(0)
+
+# porcentaje
+tabla_viajes["RECHAZO_%"] = (
+    tabla_viajes["VIAJES_FALLIDOS"] / tabla_viajes["VIAJES"]
+) * 100
+
+# gráfico
 fig_viajes = px.bar(
     tabla_viajes,
     x="MES",
-    y="RECHAZO_%_VIAJES",
-    title="Rechazo Viajes"
+    y="RECHAZO_%",
+    title="Rechazo Viajes",
+    category_orders={"MES": list(orden_meses)}
 )
 
 # ======================
