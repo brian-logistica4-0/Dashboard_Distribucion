@@ -444,17 +444,20 @@ with col1:
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
     st.subheader(" 🏪 Top Clientes - Rechazos")
+def color_rechazo(val):
+    if val > 10:
+        return "background-color: #ff4d4d"
+    elif val > 5:
+        return "background-color: #ffa64d"
+    else:
+        return "background-color: #66cc66"
+
 st.dataframe(
     top_clientes.style
-    .background_gradient(subset=["RECHAZO_%"], cmap="Reds")
-    .format({
-        "RECHAZO_%": "{:.2f}%",
-        "CF": "{:,.0f}",
-        "CF_FALLIDAS": "{:,.0f}"
-    }),
+    .applymap(color_rechazo, subset=["RECHAZO_%"])
+    .format({"RECHAZO_%": "{:.2f}%"}),
     use_container_width=True
 )
-
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
     st.subheader("Geografia - Caracteristicas")
