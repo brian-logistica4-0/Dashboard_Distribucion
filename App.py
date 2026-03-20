@@ -420,61 +420,35 @@ fig_map.update_layout(
 )
 
 # ======================
-# LAYOUT PRINCIPAL
+# 🟦 FILA 1
 # ======================
+col1, col2 = st.columns(2)
 
-col_left, col_right = st.columns([1.2, 1])
-
-# ======================
-# IZQUIERDA (2 FILAS)
-# ======================
-
-with col_left:
+with col1:
     st.subheader("📊 Dashboard Operativo")
 
-    # KPIs
+    # 🔹 FILA 1 (3 columnas)
     c1, c2, c3 = st.columns(3)
     c1.metric("📦 Cajas Totales", f"{int(total_cf):,}")
     c2.metric("❌ Cajas Rechazadas", f"{int(cf_rech):,}")
     c3.metric("📉 % Rechazo Cajas", f"{rechazo_cf:.2f}%")
 
+    # 🔹 FILA 2 (3 columnas)
     c4, c5, c6 = st.columns(3)
     c4.metric("🚚 Viajes Movilizados", f"{int(viajes_total):,}")
     c5.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}")
     c6.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
-    # Gráficos
     g1, g2 = st.columns(2)
     g1.plotly_chart(fig_cf, use_container_width=True)
     g2.plotly_chart(fig_viajes, use_container_width=True)
-
-    # Tabla
-    st.subheader("🏪 Top Clientes - Rechazos")
+    
+    st.subheader(" 🏪 Top Clientes - Rechazos")
     st.dataframe(top_clientes, use_container_width=True)
 
-    # Segunda fila izquierda
-    st.subheader("🚚 Rechazo por interno")
-    st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
-
-    st.subheader("🚚 Rechazo por chofer")
-    st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
-
-    st.subheader("📉 Analisis por cadenas")
-    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
-
-    st.subheader("📉 Autorizacion de retorno")
-    st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
-
-# ======================
-# DERECHA (MAPA GRANDE)
-# ======================
-
-with col_right:
+with col2:
     st.subheader("🗺️ Mapa de Distribución")
-    st.caption("Geografía - Características")
-
-    fig_map.update_layout(height=1200)
-
+    st.subheader("Geografia - Caracteristicas")
     st.plotly_chart(fig_map, use_container_width=True)
 
 # ======================
@@ -493,55 +467,6 @@ with col4:
     st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
     st.subheader("📉 Autorizacion de retorno")
     st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
-
-# ======================
-# 🚛 RECHAZO POR TIPO DE CAMIÓN
-# ======================
-
-st.subheader("🚛 Rechazo por tipo de camión")
-
-df_camion_tipo = df_filtrado.copy()
-
-# 🔴 MAPA CAMION → TIPO
-mapa_camion_tipo = (
-    df_camion_tipo
-    .dropna(subset=["TIPO_DE_CAMIÓN"])
-    .groupby("CAMIÓN")["TIPO_DE_CAMIÓN"]
-    .agg(lambda x: x.mode()[0] if not x.mode().empty else None)
-)
-
-# 🔴 COMPLETAR VACÍOS
-df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo.apply(
-    lambda row: mapa_camion_tipo.get(row["CAMIÓN"], None)
-    if pd.isna(row["TIPO_DE_CAMIÓN"])
-    else row["TIPO_DE_CAMIÓN"],
-    axis=1
-)
-
-# 🔴 FILTRAR SOLO CHASIS / SEMI
-df_camion_tipo = df_camion_tipo[
-    df_camion_tipo["TIPO_CAMION_OK"].isin(["Chasis", "Semi"])
-]
-
-# 🔴 CALCULO
-df_camion_tipo["CF_FALLIDAS"] = np.where(
-    df_camion_tipo["ES_FALLIDA"],
-    df_camion_tipo["CF"],
-    0
-)
-
-tabla_tipo_camion = (
-    df_camion_tipo
-    .groupby("TIPO_CAMION_OK")[["CF", "CF_FALLIDAS"]]
-    .sum()
-    .reset_index()
-)
-
-tabla_tipo_camion["RECHAZO_%"] = (
-    tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"]
-) * 100
-
-st.dataframe(tabla_tipo_camion, use_container_width=False)
 
 # ======================
 # 🚚 RECHAZO POR TIPO DE VIAJE
