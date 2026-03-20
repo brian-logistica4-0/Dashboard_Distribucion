@@ -463,13 +463,13 @@ df_camion_tipo = df_filtrado.copy()
 mapa_camion_tipo = (
     df_camion_tipo
     .dropna(subset=["TIPO_DE_CAMIÓN"])
-    .groupby("CAMION")["TIPO_DE_CAMIÓN"]
+    .groupby("CAMIÓN")["TIPO_DE_CAMIÓN"]
     .agg(lambda x: x.mode()[0] if not x.mode().empty else None)
 )
 
 # 🔴 COMPLETAR VACÍOS
 df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo.apply(
-    lambda row: mapa_camion_tipo.get(row["CAMION"], None)
+    lambda row: mapa_camion_tipo.get(row["CAMIÓN"], None)
     if pd.isna(row["TIPO_DE_CAMIÓN"])
     else row["TIPO_DE_CAMIÓN"],
     axis=1
