@@ -94,7 +94,8 @@ semana = st.sidebar.multiselect(
 )
 if semana:
     df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
-    
+
+df["ES_FALLIDA"] = df["ES_FALLIDA"].astype(str).str.upper().isin(["TRUE", "1", "SI"])
 # ======================
 # CALCULOS
 # ======================
