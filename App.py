@@ -43,7 +43,10 @@ df = df[df["FECHA_DE_SALIDA"].dt.year == anio]
 df["FECHA"] = df["FECHA_DE_SALIDA"].dt.date
 
 # agregados útiles
-df["MES"] = df["FECHA_DE_SALIDA"].dt.month_name()
+df["MES_NUM"] = df["FECHA_DE_SALIDA"].dt.month
+df["MES"] = df["FECHA_DE_SALIDA"].dt.strftime("%b")
+orden_meses = df.sort_values("MES_NUM")["MES"].unique()df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
+
 df["SEMANA"] = df["FECHA_DE_SALIDA"].dt.isocalendar().week
 
 # ======================
@@ -94,11 +97,11 @@ if semana:
 # CALCULOS
 # ======================
 
-rechazo_cf = df_cf["RECHAZO_%"].mean()
+total_cf = df_filtrado["CF"].sum()
+cf_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
+rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
 rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
-total_cf = df_cf["CF"].sum()
 
-rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 
@@ -151,8 +154,35 @@ tabla_aut["PARTICIPACION_%"] = tabla_aut["CF"] / total_fallidas * 100
 # ======================
 # GRAFICOS
 # ======================
+tabla_mes_cf = (
+    df_filtrado
+    .groupby("MES")[["CF"]]
+    .sum()
+    .reset_index()
+)
 
-fig_cf = px.bar(df_cf, x="MES", y="RECHAZO_%", title="Rechazo CF")
+cf_fallidas = (
+    df_filtrado[df_filtrado["ES_FALLIDA"] == True]
+    .groupby("MES")["CF"]
+    .sum()
+    .reset_index(name="CF_FALLIDAS")
+)
+
+tabla_mes_cf = tabla_mes_cf.merge(cf_fallidas, on="MES", how="left").fillna(0)
+
+tabla_mes_cf["RECHAZO_%"] = (
+    tabla_mes_cf["CF_FALLIDAS"] / tabla_mes_cf["CF"]
+) * 100
+
+fig_cf = px.bar(
+    tabla_mes_cf,
+    x="MES",
+    y="RECHAZO_%",
+    title="Rechazo CF",
+    category_orders={"MES": list(orden_meses)}
+)
+
+
 fig_viajes = px.bar(df_viajes, x="MES", y="RECHAZO_%_VIAJES", title="Rechazo Viajes")
 
 # ======================
@@ -202,7 +232,15 @@ color_map = {
     "GBA Sur": "#6A1B9A"
 }
 
+cliente_seleccionado = st.selectbox(
+    "Seleccionar cliente en mapa",
+    ["Todos"] + sorted(df_filtrado["CLIENTE"].dropna().unique())
+)
 df_map = df_filtrado.dropna(subset=["LATITUD", "LONGITUD"]).copy()
+
+if cliente_seleccionado != "Todos":
+    df_filtrado = df_filtrado[df_filtrado["CLIENTE"] == cliente_seleccionado]
+    df_map = df_filtrado.dropna(subset=["LATITUD", "LONGITUD"]).copy()
 
 fig_map = px.choropleth_mapbox(
     df_geo,
