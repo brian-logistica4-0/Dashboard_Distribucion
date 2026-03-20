@@ -55,6 +55,19 @@ df["DIA"] = df["FECHA_DE_SALIDA"].dt.day
 
 df_filtrado = df.copy()
 
+if cliente_seleccionado != "Todos":
+    df_filtrado = df_filtrado[df_filtrado["CLIENTE"] == cliente_seleccionado]
+# ----------------------
+# AÑO
+# ----------------------
+st.sidebar.header("Filtros")
+st.sidebar.subheader("Cliente")
+
+cliente_seleccionado = st.sidebar.selectbox(
+    "Seleccionar cliente",
+    ["Todos"] + sorted(df["CLIENTE"].dropna().unique())
+)
+
 # ----------------------
 # AÑO
 # ----------------------
@@ -366,15 +379,7 @@ color_map = {
     "GBA Sur": "#6A1B9A"
 }
 
-cliente_seleccionado = st.selectbox(
-    "Seleccionar cliente en mapa",
-    ["Todos"] + sorted(df_filtrado["CLIENTE"].dropna().unique())
-)
 df_map = df_filtrado.dropna(subset=["LATITUD", "LONGITUD"]).copy()
-
-if cliente_seleccionado != "Todos":
-    df_filtrado = df_filtrado[df_filtrado["CLIENTE"] == cliente_seleccionado]
-    df_map = df_filtrado.dropna(subset=["LATITUD", "LONGITUD"]).copy()
 
 fig_map = px.choropleth_mapbox(
     df_geo,
