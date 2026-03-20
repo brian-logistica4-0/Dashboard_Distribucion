@@ -145,6 +145,8 @@ viajes_total = df_filtrado["CF"].sum()
 viajes_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
 rechazo_viajes = (viajes_rech / viajes_total) * 100 if total_cf > 0 else 0
 
+df_clientes = df_filtrado.copy()
+df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
 tabla_clientes = (
     df_clientes.groupby("CLIENTE")[["CF", "CF_FALLIDAS"]]
     .sum()
