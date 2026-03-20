@@ -102,7 +102,7 @@ if semana:
 total_cf = df_filtrado["CF"].sum()
 cf_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
 rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
-rechazo_viajes = df_viajes["RECHAZO_%_VIAJES"].mean()
+rechazo_viajes = tabla_viajes["RECHAZO_%_VIAJES"].mean()
 
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
