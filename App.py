@@ -26,9 +26,11 @@ df, tabla_cf, tabla_viajes = cargar_datos()
 # ======================
 # FILTRO
 # ======================
-df["FECHA_DE_SALIDA"] = pd.to_datetime(df["FECHA_DE_SALIDA"], errors="coerce")
-st.sidebar.header("Filtros")
-
+df["FECHA_DE_SALIDA"] = pd.to_datetime(
+    df["FECHA_DE_SALIDA"],
+    dayfirst=True,
+    errors="coerce"
+)
 
 # ======================
 # CAMPOS DE TIEMPO
