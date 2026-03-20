@@ -459,15 +459,33 @@ st.subheader("🚛 Rechazo por tipo de camión")
 
 df_camion_tipo = df_filtrado.copy()
 
-# Clasificación segura (NO pierde datos)
-df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo["TIPO_DE_CAMIÓN"].fillna("OTROS")
+# 🔴 Normalización robusta
+df_camion_tipo["TIPO_CAMION_OK"] = (
+    df_camion_tipo["TIPO_DE_CAMIÓN"]
+    .astype(str)
+    .str.strip()
+    .str.upper()
+)
 
+# 🔴 Unificación final
+df_camion_tipo["TIPO_CAMION_OK"] = df_camion_tipo["TIPO_CAMION_OK"].replace({
+    "CHASIS": "Chasis",
+    "SEMI": "Semi"
+})
+
+# 🔴 Filtrar solo los válidos (sin OTROS)
+df_camion_tipo = df_camion_tipo[
+    df_camion_tipo["TIPO_CAMION_OK"].isin(["Chasis", "Semi"])
+]
+
+# 🔴 Cálculo de fallidas
 df_camion_tipo["CF_FALLIDAS"] = np.where(
     df_camion_tipo["ES_FALLIDA"],
     df_camion_tipo["CF"],
     0
 )
 
+# 🔴 Agrupación
 tabla_tipo_camion = (
     df_camion_tipo
     .groupby("TIPO_CAMION_OK")[["CF", "CF_FALLIDAS"]]
@@ -475,10 +493,12 @@ tabla_tipo_camion = (
     .reset_index()
 )
 
+# 🔴 Porcentaje
 tabla_tipo_camion["RECHAZO_%"] = (
     tabla_tipo_camion["CF_FALLIDAS"] / tabla_tipo_camion["CF"]
 ) * 100
 
+# 🔴 Output
 st.dataframe(tabla_tipo_camion, use_container_width=False)
 
 # ======================
