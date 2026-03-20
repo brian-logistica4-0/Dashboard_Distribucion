@@ -176,7 +176,7 @@ top_clientes = tabla_clientes.sort_values("CF_FALLIDAS", ascending=False).head(1
 # CAMION
 # ======================
 tabla_camion = (
-    df_clientes.groupby("CAMION_U")[["CF", "CF_FALLIDAS"]]
+    df.groupby("CAMION_U")[["CF", "CF_FALLIDAS"]]
     .sum()
     .reset_index()
 )
