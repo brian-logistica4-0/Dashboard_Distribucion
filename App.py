@@ -136,14 +136,40 @@ if "FORMATO_CADENA" in df.columns:
 # ======================
 # CALCULOS
 # ======================
+# ======================
+# CALCULOS CORRECTOS
+# ======================
 
-total_cf = df_filtrado["CAMION_U"].sum()
+# TOTAL CAJAS
+total_cf = df_filtrado["CF"].sum()
+
+# CAJAS RECHAZADAS
 cf_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
+
+# % RECHAZO CAJAS
 rechazo_cf = (cf_rech / total_cf) * 100 if total_cf > 0 else 0
 
-viajes_total = df_filtrado["CF"].sum()
-viajes_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
-rechazo_viajes = (viajes_rech / viajes_total) * 100 if total_cf > 0 else 0
+
+# ======================
+# VIAJES
+# ======================
+
+# ID de viaje
+df_filtrado["VIAJE_ID"] = (
+    df_filtrado["CAMION_U"].astype(str) + "_" +
+    df_filtrado["FECHA_DE_SALIDA"].dt.date.astype(str)
+)
+
+# TOTAL VIAJES
+viajes_total = df_filtrado["VIAJE_ID"].nunique()
+
+# VIAJES CON FALLA
+viajes_rech = df_filtrado[
+    df_filtrado["ES_FALLIDA"] == True
+]["VIAJE_ID"].nunique()
+
+# % RECHAZO VIAJES
+rechazo_viajes = (viajes_rech / viajes_total) * 100 if viajes_total > 0 else 0
 
 df_clientes = df_filtrado.copy()
 df_clientes["CF_FALLIDAS"] = np.where(df_clientes["ES_FALLIDA"], df_clientes["CF"], 0)
