@@ -184,8 +184,12 @@ fig_cf = px.bar(
     category_orders={"MES": list(orden_meses)}
 )
 
-
-fig_viajes = px.bar(df_viajes, x="MES", y="RECHAZO_%_VIAJES", title="Rechazo Viajes")
+fig_viajes = px.bar(
+    tabla_viajes,
+    x="MES",
+    y="RECHAZO_%_VIAJES",
+    title="Rechazo Viajes"
+)
 
 # ======================
 # MAPA
