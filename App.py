@@ -134,7 +134,6 @@ if "FORMATO_CADENA" in df.columns:
 # ======================
 # CALCULOS
 # ======================
-df["ES_FALLIDA"] = df["ES_FALLIDA"].astype(str).str.upper().isin(["TRUE", "1", "SI"])
 
 total_cf = df_filtrado["CF"].sum()
 cf_rech = df_filtrado[df_filtrado["ES_FALLIDA"] == True]["CF"].sum()
