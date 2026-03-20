@@ -52,35 +52,29 @@ df["DIA"] = df["FECHA_DE_SALIDA"].dt.day
 # ======================
 
 # ======================
-# FILTRO PRINCIPAL (TIEMPO)
+# FILTRO DE FECHA (FLEXIBLE)
 # ======================
 
-# AÑO
-anio = st.sidebar.selectbox(
-    "Año",
-    sorted(df["AÑO"].dropna().unique())
+fecha_min = df["FECHA_DE_SALIDA"].min().date()
+fecha_max = df["FECHA_DE_SALIDA"].max().date()
+
+fecha_rango = st.sidebar.date_input(
+    "Seleccionar rango de fechas",
+    value=(fecha_min, fecha_max)
 )
 
-df_filtrado = df[df["AÑO"] == anio]
+df_filtrado = df.copy()
 
-# MES
-mes = st.sidebar.selectbox(
-    "Mes",
-    sorted(
-        df_filtrado["MES"].dropna().unique(),
-        key=lambda x: list(orden_meses).index(x)
-    )
-)
+if isinstance(fecha_rango, tuple) and len(fecha_rango) == 2:
+    inicio, fin = fecha_rango
 
-df_filtrado = df_filtrado[df_filtrado["MES"] == mes]
+    inicio = pd.to_datetime(inicio)
+    fin = pd.to_datetime(fin) + pd.Timedelta(days=1)
 
-# DIA
-dia = st.sidebar.selectbox(
-    "Día",
-    sorted(df_filtrado["DIA"].dropna().unique())
-)
-
-df_filtrado = df_filtrado[df_filtrado["DIA"] == dia]
+    df_filtrado = df_filtrado[
+        (df_filtrado["FECHA_DE_SALIDA"] >= inicio) &
+        (df_filtrado["FECHA_DE_SALIDA"] < fin)
+    ]
 
 # FORMATO
 if "FORMATO_CADENA" in df.columns:
@@ -90,22 +84,6 @@ if "FORMATO_CADENA" in df.columns:
     )
     if formato:
         df_filtrado = df_filtrado[df_filtrado["FORMATO_CADENA"].isin(formato)]
-
-# MES
-mes = st.sidebar.multiselect(
-    "Mes",
-    df_filtrado["MES"].dropna().unique()
-)
-if mes:
-    df_filtrado = df_filtrado[df_filtrado["MES"].isin(mes)]
-
-# SEMANA
-semana = st.sidebar.multiselect(
-    "Semana",
-    sorted(df_filtrado["SEMANA"].dropna().unique())
-)
-if semana:
-    df_filtrado = df_filtrado[df_filtrado["SEMANA"].isin(semana)]
 
 # ======================
 # CALCULOS
