@@ -394,7 +394,7 @@ with col1:
     st.subheader("📊 Dashboard Operativo")
 
     k1, k2, k3 = st.columns(3)
-    k1.metric("📦 Total Cajas", f"{int(total_cf):,}")
+    k1.metric("📦 Cajas Movilizadas", f"{int(total_cf):,}")
     k2.metric("❌ Rechazo CF", f"{rechazo_cf:.2f}%")
     k3.metric("🚚 Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
