@@ -1047,12 +1047,31 @@ st.dataframe(ranking)
 # ======================
 # 🔥 MAPA DE CALOR DE RECHAZOS
 # ======================
+motivos = ["Todos"] + sorted(df_filtrado["grupo_motivo"].dropna().unique())
+
+motivo_sel = st.selectbox("Filtrar mapa por motivo", motivos)
 
 st.subheader("🔥 Mapa de calor de rechazos")
 
 df_heat = df_filtrado[
     (df_filtrado["ES_FALLIDA"] == True)
-].dropna(subset=["LATITUD", "LONGITUD"]).copy()
+].copy()
+
+if motivo_sel != "Todos":
+    df_heat = df_heat[df_heat["grupo_motivo"] == motivo_sel]
+
+df_heat = df_heat.dropna(subset=["LATITUD", "LONGITUD"])
+
+# 🔥 CLUSTERS
+df_heat["lat_bin"] = df_heat["LATITUD"].round(2)
+df_heat["lon_bin"] = df_heat["LONGITUD"].round(2)
+
+clusters = (
+    df_heat
+    .groupby(["lat_bin", "lon_bin"])
+    .size()
+    .reset_index(name="cantidad")
+)
 
 fig_heat = go.Figure()
 
