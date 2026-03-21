@@ -823,7 +823,10 @@ def clasificar_otros_exacto(texto):
 
     mapa_normalizado = {normalizar(k): v for k, v in mapa.items()}
 
-    return mapa_normalizado.get(texto, "Otros")
+    for k, v in mapa_normalizado.items():
+        if k in texto:
+            return v
+    return "Otros"
 
 
 # ======================
@@ -922,8 +925,6 @@ st.plotly_chart(fig2, use_container_width=True)
 st.subheader("📋 Detalle")
 
 st.dataframe(ranking)
-
-st.write(df["OBSERVACIONES_x"].sample(20))
 
 
 
