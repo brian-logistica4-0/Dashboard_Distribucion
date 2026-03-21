@@ -847,23 +847,22 @@ def procesar_datos(df):
         )
     )
 
-# 👉 crear columna auxiliar limpia
-df["texto_clasificar"] = df["OBSERVACIONES_x"]
+    # 👉 crear columna auxiliar limpia
+    df["texto_clasificar"] = df["OBSERVACIONES_x"]
 
-# donde no hay observaciones → usar código
-df.loc[
-    df["texto_clasificar"].isna() |
-    (df["texto_clasificar"].astype(str).str.strip().isin(["", "nan", "none", "NaN"])),
-    "texto_clasificar"
-] = df["MOTIVO_-_CÓDIGO"]
+    df.loc[
+        df["texto_clasificar"].isna() |
+        (df["texto_clasificar"].astype(str).str.strip().isin(["", "nan", "none", "NaN"])),
+        "texto_clasificar"
+    ] = df["MOTIVO_-_CÓDIGO"]
 
-# 👉 clasificar SIEMPRE sobre la misma columna consistente
-df["grupo_motivo"] = df["texto_clasificar"].apply(clasificar_motivo)
+    df["grupo_motivo"] = df["texto_clasificar"].apply(clasificar_motivo)
 
-mask = df["grupo_motivo"] == "Otros"
-df.loc[mask, "grupo_motivo"] = df.loc[mask, "texto_clasificar"].apply(clasificar_otros_exacto)
+    mask = df["grupo_motivo"] == "Otros"
+    df.loc[mask, "grupo_motivo"] = df.loc[mask, "texto_clasificar"].apply(clasificar_otros_exacto)
 
-    return df
+    return df  # ✅ válido SOLO dentro de la función
+
 df = procesar_datos(df)
 # ======================
 # FILTRO FALLIDAS
