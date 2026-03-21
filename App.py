@@ -605,7 +605,218 @@ def clasificar_otros_exacto(texto):
     texto = str(texto).strip().upper()
 
     mapa = {
-        # (TODO tu mapa completo va acá EXACTAMENTE como lo tenías)
+       # RECEPCIÓN
+    "SIN RECEPCIÒN SE VUELVE SOLO": "Problema recepción",
+    "SIN REEPCIONISTA": "Problema recepción",
+    "RECIBEN LA MITAD DEL PEDIDO": "Problema recepción",
+    "2 VECES SIN RECIBIR": "Problema recepción",
+
+    # ACCESO
+    "MARANTON - NO PUEDE INGRSAR": "Problemas de acceso al cliente",
+    "NO PUEDE ESTACIONAR DOBLE FILA": "Problemas de acceso al cliente",
+    "NO PUEDE ESTACIONAR": "Problemas de acceso al cliente",
+    "NO PODIA ESTACIONAR": "Problemas de acceso al cliente",
+    "NO PUDO INGRESAR CON EL CAMION": "Problemas de acceso al cliente",
+    "AUTO ESTACIONADO EN LA PUERTA": "Problemas de acceso al cliente",
+    "AUTO ESTACIONADOS / NO SE PUEDE MANIOBRAR": "Problemas de acceso al cliente",
+    "AUTOS MAL ESTACIONADOS": "Problemas de acceso al cliente",
+    "LAPOLICIA NO LO DEJO ESTACIONAR": "Problemas de acceso al cliente",
+    "MULTA POLICIAL": "Problemas de acceso al cliente",
+    "NO PUEDE ESATCIONAR/EENTRADA TAPADA POR AUTO": "Problemas de acceso al cliente",
+    "CALLE CORTADA": "Problemas de acceso al cliente",
+
+    # GREMIAL
+    "SE VUELVE SIN AVISO/DELAGADO": "Problema gremial",
+    "SE VUELVE POR DELGADO/LE PASAN CAMIONETAS ANTES": "Problema gremial",
+    "REUNION GREMIAL EN COTO": "Problema gremial",
+    "NO DESARMA": "Problema gremial",
+    "CORTE GREMIAL DE PER COTO": "Problema gremial",
+    "MANIFESTACION/ MUNDIAL": "Problema gremial",
+    "EL DELGADO LO DIJO QUE SE VUELVA DESCONFORME CON LA CARGA": "Problema gremial",
+
+    # OPERATIVO
+    "SE VOLVIO SOLO": "Problema operativo",
+    "SE VUELVE SOLO": "Problema operativo",
+    "SE VUELVE DEL MERCADO": "Problema operativo",
+    "SE VULVE NO ESPERA , SE ANULO TIENE NUEVO PEDIDO": "Problema operativo",
+    "NO ES DIA DE ENTREGA/FIRMAN BOLETA": "Problema operativo",
+
+    # DEMORA
+    "DMEORA": "Demoras",
+    "SE VUELVE SOLO 01:41 ESPERA": "Demoras",
+
+    # CLIENTE
+    "RECHAZO MERCADO": "Cliente rechaza el pedido",
+    "NO QUSO PEDIDO/ NORECARGO": "Cliente rechaza el pedido",
+    "NO  ESTABA PEDIDO": "Cliente rechaza el pedido",
+    "NO QUIERE EL PEDIDO": "Cliente rechaza el pedido",
+
+    # DUPLICADOS
+    "PEDIDO YA ENTREGADO": "Pedido duplicado",
+    "LO RECIBIO AYER": "Pedido duplicado",
+    "ORDEN REPETIDA": "Pedido duplicado",
+
+    # LOGÍSTICA
+    "MAL LA RUTA": "Error de ruteo",
+    "MERC EN TRANSITO": "Error de ruteo",
+
+    # DESCARGA
+    "NO DESCARGA EN DOBLE FILA": "Problemas para descargar",
+    "NO DESCARGA DOBLE FILA": "Problemas para descargar",
+    "NO DESCARGA EN BICISENDA": "Problemas para descargar",
+    "NO PUDO DESCARGAR BICISENDA": "Problemas para descargar",
+    "NO QUIZO BAJARLO": "Problemas para descargar",
+    "NO PUEDE BAJAR MERC / PECHO DEL CAMION": "Problemas para descargar",
+
+    # MECÁNICO
+    "VTV VENCIDA DEL CAMION": "Problemas mecanicos",
+    "SE DESCOMPUSO EL CHOFER": "Problemas mecanicos",
+
+    # SISTEMA / CARGA
+    "NO SE PUEDE REPLICAR": "Problemas con la orden de compra",
+    "NO SE PUDO CARGAR LAS ORDENES": "Problemas con la orden de compra",
+
+    # ADMIN / COMERCIAL
+    "SIN BOLETA": "Problemas de facturación",
+    "PARA EL LUNES/FIRMAN BOLETA": "Sin lugar para descargar",
+    "LO QUIEREN  MAÑANA": "Sin lugar para descargar",
+    "ENVIAR MAÑANA (MARANDO)": "Sin lugar para descargar",
+    "EL EJEC AVISA Q LO RECIBE DESPUES DE LAS 2": "Problema comercial",
+
+    # PEDIDO / DATOS
+    "MAL GRABADO": "Pedido mal elaborado",
+    "TIENE MAL GRABADA LA O/C": "Problemas con la orden de compra",
+
+    # MERCADERÍA
+    "ESTABA CARGADO AL REVES": "Problema con mercadería",
+
+    # CAPACIDAD
+    "FALTA DE LUGAR": "Sin lugar para descargar",
+
+    # SISTEMA CLIENTE
+    "SIN SITEMA NO LO RECIBE EL MERCADO": "Cliente sin sistema",
+
+    # ADMIN / DOCUMENTACIÓN
+    "R14/ FIRMA Y SELLO DE LA CADENA": "Problema administrativo",
+    "SIN BOLETA DE CAMBIOS": "Problemas de facturación",
+    "FIRMAN BOLETA/NQPEDIDO": "Problema administrativo",
+
+    # LOGÍSTICA / RUTEO
+    "DOS MERCADOS CON MISMA RUTA  Y TR": "Error de ruteo",
+    "DISTANCIA ENTRE MERCADO": "Error de ruteo",
+
+    # CLIENTE
+    "PEDIDO NO SOLICITADO": "Cliente rechaza el pedido",
+    "RECHAZO EL PEDIDO POR QUE ERA UN FORZADA": "Cliente rechaza el pedido",
+
+    # MERCADERÍA
+    "CARGA VOLCADA": "Problema con mercaderia",
+    "MAL CARGADO": "Problema con mercaderia",
+
+    # OPERATIVO / DESCARGA
+    "SIN CIEGO": "Problemas para descargar",
+    "NO ENTRA CAMI+ON": "Problemas de acceso al cliente",
+    "NO PUDO DESCARGAR": "Problemas para descargar",
+    "DOBLE FILA / NO PUEDE BAJAR NI MANIOBRAR": "Problemas para descargar",
+    "NO SE PUEDE DESCARGAR AUTOELEVADOR": "Problemas para descargar",
+
+    # GREMIAL
+    "REUNION SINDICAL EN EL LUGAR / SE VUELVE": "Problema gremial",
+    "MANIFESTACIÓN": "Problema gremial",
+
+    # TIEMPOS / DEMORA
+    "30 MIN  DE ESPERA": "Demoras",
+    "DEMOA": "Demoras",
+
+    # REPROGRAMACIÓN
+    "QUEDA CARGADO SE ENTREGA MAÑANA 15-04": "Sin lugar para descargar",
+    "PIDEN ENVIARLO MAÑANA": "Sin lugar para descargar",
+    "NO TIENE LUGAR RECIBE EL  MARTES": "Sin lugar para descargar",
+
+    # CAPACIDAD / RECEPCIÓN
+    "RECIBE 1 CAMION POR DIA": "Problema recepción",
+    "NO  HAY LUGAR NO LE DAN RESPUESTA AL AJECUTIVO": "Sin lugar para descargar",
+
+    # VEHÍCULO / MECÁNICO
+    "CAMIÓN DE 10": "Problemas mecanicos",
+    "VUELVE A INGRESAR/SIN FRENOS/VUELVE A SALIR": "Problemas mecanicos",
+
+    # DUPLICADOS
+    "PEDIDO REPETIDO": "Pedido duplicado",
+    "ORDEN RECIBIDA": "Pedido duplicado",
+
+    # ACCESO / ENTORNO
+    "OBRAS EN LA CALLE": "Problemas de acceso al cliente",
+    "ZONA CERRADA/ INCENDIO AL REDEDORES DEL MARCADO": "Problema climático",
+
+    # OPERATIVO GENERAL
+    "SALE DE RECARGA": "Problema operativo",
+    
+    # ACCESO
+    "NO ENTRA EL CAMION": "Problemas de acceso al cliente",
+    "TRANSITO NO DEJA ESTACIONAR": "Problemas de acceso al cliente",
+    "NO PUEDE LLEGAR AL CD": "Problemas de acceso al cliente",
+    "DOBLE FILA": "Problemas de acceso al cliente",
+    "RA1  CAMINO ACCIDENTADO": "Problemas de acceso al cliente",
+
+    # CLIENTE
+    "NO LO QUISO POR PICKE/SE ENVIO TARDE/FIRMO BOLETA": "Cliente rechaza el pedido",
+    "SE RECHAZO POR FALTA SIN CARGO": "Cliente rechaza el pedido",
+
+    # MECÁNICO
+    "CAMION DESCOMPUESTO": "Problemas mecanicos",
+    "FALLO MECANICO": "Problemas mecanicos",
+    "DESCOMPUESTO AYUDANTE": "Problemas mecanicos",
+
+    # GREMIAL
+    "R07 DESARMO BOD": "Problema gremial",
+    "PERMISO GREMIAL CHOFER - NO RECARGA": "Problema gremial",
+
+    # DUPLICADOS
+    "EL PEDIDO LO RECIBIO EL SABADO": "Pedido duplicado",
+
+    # CLIMA / OPERATIVO
+    "DARSENA INHUNDADA": "Problema climático",
+    "TOMA LA DECISIÓN DE VOLVER PQ LLUEVE/ ESTUVO 40MIN": "Problema climático",
+
+    # LOGÍSTICA / CARGA
+    "ORDENES CRUZADAS": "Problemas con la orden de compra",
+    "NO CARGADO POR BODEGA SIN CARGO": "Pedido mal elaborado",
+
+    # DESCARGA
+    "NO LO PUEDE DESCARGAR POR EL 1ER VIAJE ADELANTE ( PECHO DEL CAMION)": "Problemas para descargar",
+    "FIRMA BOLETA NO TIENE CLARCK PARA DESCARGAR EL CAMION": "Problemas para descargar",
+
+    # RECEPCIÓN
+    "SE VUELVE PORQUE NO LO ATIENDEN": "Problema recepción",
+    "RECIBE HASTA LAS 12:00 HS": "Problema recepción",
+
+    # OC
+    "ORDEN COMPRA CERRADA - SOLO ENTREGO 15 CAJAS DEL TOTAL": "Problemas con la orden de compra",
+
+    # OPERATIVO
+    "NO RECARGA": "Problemas para descargar",
+    "SE VUELVE DEL MERCADO NO ESPERA RESPUESTA": "Problemas para descargar",
+    "REPACION DE INGRESO DE MERCADO": "Problemas para descargar",
+    "SE LE CAYO 1 PLANCHA Y VOLVIO": "Problemas para descargar",
+    "FUE Y VOLVIO - ENTREGO COMO RECARGA": "Problemas para descargar",
+
+    # CAPACIDAD
+    "NO TIENE LUGAR - EJEC PIDE  ENVIAR SABADO": "Sin lugar para descargar",
+    "FALTA DE ESPACIO": "Sin lugar para descargar",
+
+    # COMERCIAL / GESTIÓN
+    "PIDEN ABASTAR": "Problema comercial",
+
+    # SEGURIDAD / CONTROL
+    "INSPECCION DEL GOBIERNO": "Problemas para descargar",
+
+    # REPROGRAMACIÓN
+    "LO QUIERE MAÑANA": "Cliente rechaza el pedido",
+
+    # CALIDAD / CARGA
+    "CHOFER NO QUIERE VOLVER A PASAR POR ESTAR MAL CARGADO EL CAMIION": "Problema con carga"
+    
     }
 
     return mapa.get(texto, "Otros")
