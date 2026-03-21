@@ -851,7 +851,7 @@ df_filtrado = procesar_datos(df_filtrado)
 # ======================
 # FILTRO FALLIDAS
 # ======================
-df_fallidas = df[df["ES_FALLIDA"] == True]
+df_fallidas = df_filtrado[df_filtrado["ES_FALLIDA"] == True]
 
 # ======================
 # RANKING
