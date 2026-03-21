@@ -504,15 +504,6 @@ st.dataframe(tabla_viajes_tipo, use_container_width=False)
 
 
 # ======================
-# CARGA DATOS
-# ======================
-@st.cache_data
-def cargar_datos():
-    return pd.read_csv("dataset_limpio.csv")
-
-df = cargar_datos().copy()
-
-# ======================
 # FUNCIONES
 # ======================
 def clasificar_motivo(texto):
@@ -832,7 +823,6 @@ def clasificar_otros_exacto(texto):
             return v
     return "Otros"
 
-
 # ======================
 # PROCESAMIENTO (CACHEADO)
 # ======================
@@ -856,8 +846,7 @@ def procesar_datos(df):
 
     return df
 
-
-df = procesar_datos(df)
+df_filtrado = procesar_datos(df_filtrado))
     
 # ======================
 # FILTRO FALLIDAS
