@@ -860,10 +860,10 @@ df.loc[
 # 👉 clasificar SIEMPRE sobre la misma columna consistente
 df["grupo_motivo"] = df["texto_clasificar"].apply(clasificar_motivo)
 
-mask = df["grupo_motivo"] == "Otros"
-df.loc[mask, "grupo_motivo"] = df.loc[mask, "texto_clasificar"].apply(clasificar_otros_exacto)
+    mask = df["grupo_motivo"] == "Otros"
+    df.loc[mask, "grupo_motivo"] = df.loc[mask, "texto_clasificar"].apply(clasificar_otros_exacto)
 
-return df
+    return df
 df = procesar_datos(df)
 # ======================
 # FILTRO FALLIDAS
