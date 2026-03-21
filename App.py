@@ -1059,7 +1059,7 @@ fig_heat = go.Figure()
 fig_heat.add_trace(go.Densitymapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
-    z=[1]*len(df_heat),
+    z=df_heat.groupby(["LATITUD", "LONGITUD"])["LATITUD"].transform("count"),
     radius=25,
     colorscale="YlOrRd",  # 🔥 amarillo → naranja → rojo
     showscale=True
