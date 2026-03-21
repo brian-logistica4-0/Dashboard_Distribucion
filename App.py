@@ -923,6 +923,7 @@ st.subheader("📋 Detalle")
 
 st.dataframe(ranking)
 
+st.write(df["OBSERVACIONES_x"].sample(20))
 
 
 
