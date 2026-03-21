@@ -508,81 +508,199 @@ st.dataframe(tabla_viajes_tipo, use_container_width=False)
 # ======================
 def clasificar_motivo(texto):
     texto = str(texto).lower().strip()
-
+# 🔴 1. CASOS MUY ESPECÍFICOS (códigos / frases exactas)
     if "ro9" in texto or "r09" in texto or "orden vencida" in texto:
         return "Problemas con la orden de compra"
+
     elif "orden cerrada" in texto:
         return "Problemas con la orden de compra"
+
     elif "ra4" in texto or "no se tiene acceso" in texto:
         return "Problemas para descargar"
+
     elif "ri3" in texto or "no se pudo descargar" in texto:
         return "Problemas para descargar"
+
     elif "rk1" in texto or "pedido ya recibido" in texto:
         return "Pedido duplicado"
+
     elif "duplicado" in texto:
         return "Pedido duplicado"
+
     elif "rh0" in texto or "no pedido" in texto:
         return "Cliente rechaza el pedido"
+
     elif "no quiere pedido" in texto or "no estaba pedido" in texto:
         return "Cliente rechaza el pedido"
+
+    # 🔴 2. CLIENTE
     elif "rechaza" in texto or "no lo quiere" in texto or "no quiso" in texto or "inventario" in texto:
         return "Cliente rechaza el pedido"
+
     elif "cerrado" in texto:
         return "Cliente cerrado"
+
+    # 🔴 3. CAPACIDAD / DESCARGA / ACCESO (ANTES que recepción)
     elif "sin lugar" in texto or "sin espacio" in texto:
         return "Sin lugar para descargar"
+
     elif "deposito colapsado" in texto:
         return "Sin lugar para descargar"
+
     elif "no puede descargar" in texto:
         return "Problemas para descargar"
+
     elif "no ingreso" in texto or "no ingresa" in texto or "no puede ingresar" in texto or "arbol" in texto:
         return "Problemas de acceso al cliente"
+
+    # 🔴 4. OC / DOCUMENTACIÓN
     elif "oc" in texto or "orden de compra" in texto:
         return "Problemas con la orden de compra"
+
     elif "mal facturado" in texto:
         return "Problemas de facturación"
+
+    # 🔴 5. GREMIAL (ANTES de recepción)
     elif "gremio" in texto or "conflicto" in texto or "desarme" in texto or "delegado" in texto:
         return "Problema gremial"
+
+    # 🔴 6. SISTEMA
     elif "sin sistema" in texto:
         return "Cliente sin sistema"
+
     elif "sistema" in texto:
         return "Cliente sin sistema"
+
+    # 🔴 7. RECEPCIÓN (más abajo para no interferir)
     elif "recepcion" in texto or "recepcionista" in texto:
         return "Problema recepción"
+
     elif "sin personal" in texto:
         return "Problema recepción"
+
+    # 🔴 8. OPERATIVO
     elif "demora" in texto:
         return "Demoras"
+
     elif "camiones" in texto:
         return "Demoras"
+
     elif "bloqueado" in texto or "2hs" in texto:
         return "Problemas para descargar"
+
     elif "no se entrego" in texto:
         return "Problemas para descargar"
+
     elif "fuera de horario" in texto:
         return "Fuera de horario"
+
     elif "turno" in texto:
         return "Problema de turnado"
-    elif "zorra" in texto or "camion fuera de servicio" in texto or "pala" in texto:
+
+    elif "zorra" in texto:
         return "Problemas mecanicos"
+        
+    elif "camion fuera de servicio" in texto:
+        return "Problemas mecanicos"
+        
+    elif "pala" in texto:
+        return "Problemas mecanicos"
+
+    # 🔴 9. MERCADERÍA
     elif "mercaderia" in texto or "producto" in texto or "faltante" in texto:
         return "Problema con mercadería"
+
     elif "pallet" in texto or "carga caida" in texto:
         return "Problema con carga"
+
     elif "vencimiento" in texto or "fecha corta" in texto or "corto vencimiento" in texto:
         return "Fecha corta / vencimiento"
+
     elif "fecha" in texto:
         return "Fecha corta / vencimiento"
+
     elif "devolucion" in texto or "devulucion" in texto:
         return "Problemas con devolución"
+
+    # 🔴 10. CLIMA
     elif "lluvia" in texto or "inundada" in texto:
         return "Problema climático"
+
+    # 🔴 11. LOGÍSTICA
     elif "ruteado" in texto:
         return "Error de ruteo"
+
+    # 🔴 12. GESTIÓN
     elif "comercial" in texto or "ejecutivo" in texto:
         return "Problema comercial"
+
+    # 🔴 13. SIN MOTIVO
     elif "sin motivo" in texto:
         return "Sin motivo cargado"
+
+    # 🔴 AJUSTES FINALES
+
+    elif "turnado" in texto or "no turnado" in texto:
+        return "Problema de turnado"
+    
+    elif "sin acceso" in texto or "no se puede ingresar" in texto or "no podia ingresar" in texto:
+        return "Problemas de acceso al cliente"
+    
+    elif "orden gremial" in texto or "dele" in texto:
+        return "Problema gremial"
+    
+    elif "mal pedido" in texto or "pedido mal elaborado" in texto or "ra2" in texto:
+        return "Pedido mal elaborado"
+    
+    elif "codigo inhabilitado" in texto or "ra0" in texto:
+        return "Cliente sin sistema"
+    
+    elif "no pueden recibir" in texto or "no recibe" in texto:
+        return "Problema recepción"
+    
+    elif "sin luz" in texto:
+        return "Problema operativo"
+    
+    elif "balance" in texto:
+        return "Problema operativo"
+    
+    elif "sin recepcion" in texto:
+        return "Problema recepción"
+    
+    elif "no podia descargar por espacio" in texto:
+        return "Sin lugar para descargar"
+    
+    elif "no se puede ingresar" in texto:
+        return "Problemas de acceso al cliente"
+    
+    elif "mezclado" in texto:
+        return "Error de preparación"
+    
+    elif "no le reciben la totalidad" in texto:
+        return "Problema recepción"
+    
+    elif "sin orden" in texto:
+        return "Problemas con la orden de compra"
+    
+    elif "motor" in texto:
+        return "Problemas mecanicos"
+    
+    elif "clausurado" in texto:
+        return "Problema operativo"
+    
+    elif "sin aut" in texto:
+        return "Problema administrativo"
+    
+    elif "no quiso pedido" in texto:
+        return "Cliente rechaza el pedido"
+    
+    elif "fuera de hora" in texto:
+        return "Fuera de horario"
+    
+    # 🔴 14. RESTO DE CÓDIGOS (AL FINAL SIEMPRE)
+    elif "rk" in texto or "ro" in texto or "rj" in texto or "ri" in texto or "rh" in texto:
+        return "Pedido mal elaborado"
+
     else:
         return "Otros"
 
