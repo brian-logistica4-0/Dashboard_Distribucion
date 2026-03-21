@@ -1060,8 +1060,9 @@ fig_heat.add_trace(go.Densitymapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
     z=[1]*len(df_heat),
-    radius=20,
-    showscale=False
+    radius=25,
+    colorscale="YlOrRd",  # 🔥 amarillo → naranja → rojo
+    showscale=True
 ))
 
 fig_heat.add_trace(go.Scattermapbox(
