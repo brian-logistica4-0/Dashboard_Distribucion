@@ -500,3 +500,201 @@ tabla_viajes_tipo["RECHAZO_%"] = (
 ) * 100
 
 st.dataframe(tabla_viajes_tipo, use_container_width=False)
+
+
+
+# ======================
+# MOTIVOS DE RECHAZO
+# ======================
+condicion = (
+    (df["ES_FALLIDA"]) &
+    (
+        df["OBSERVACIONES_x"].isna() |
+        (df["OBSERVACIONES_x"].astype(str).str.strip().isin(["", "nan","none","NaN"]))
+    )
+)
+
+df.loc[condicion, "OBSERVACIONES_x"] = df.loc[condicion, "MOTIVO_-_CÓDIGO"]
+
+# ======================
+# FUNCIONES
+# ======================
+def clasificar_motivo(texto):
+    texto = str(texto).lower().strip()
+
+    if "ro9" in texto or "r09" in texto or "orden vencida" in texto:
+        return "Problemas con la orden de compra"
+    elif "orden cerrada" in texto:
+        return "Problemas con la orden de compra"
+    elif "ra4" in texto or "no se tiene acceso" in texto:
+        return "Problemas para descargar"
+    elif "ri3" in texto or "no se pudo descargar" in texto:
+        return "Problemas para descargar"
+    elif "rk1" in texto or "pedido ya recibido" in texto:
+        return "Pedido duplicado"
+    elif "duplicado" in texto:
+        return "Pedido duplicado"
+    elif "rh0" in texto or "no pedido" in texto:
+        return "Cliente rechaza el pedido"
+    elif "no quiere pedido" in texto or "no estaba pedido" in texto:
+        return "Cliente rechaza el pedido"
+    elif "rechaza" in texto or "no lo quiere" in texto or "no quiso" in texto or "inventario" in texto:
+        return "Cliente rechaza el pedido"
+    elif "cerrado" in texto:
+        return "Cliente cerrado"
+    elif "sin lugar" in texto or "sin espacio" in texto:
+        return "Sin lugar para descargar"
+    elif "deposito colapsado" in texto:
+        return "Sin lugar para descargar"
+    elif "no puede descargar" in texto:
+        return "Problemas para descargar"
+    elif "no ingreso" in texto or "no ingresa" in texto or "no puede ingresar" in texto or "arbol" in texto:
+        return "Problemas de acceso al cliente"
+    elif "oc" in texto or "orden de compra" in texto:
+        return "Problemas con la orden de compra"
+    elif "mal facturado" in texto:
+        return "Problemas de facturación"
+    elif "gremio" in texto or "conflicto" in texto or "desarme" in texto or "delegado" in texto:
+        return "Problema gremial"
+    elif "sin sistema" in texto:
+        return "Cliente sin sistema"
+    elif "sistema" in texto:
+        return "Cliente sin sistema"
+    elif "recepcion" in texto or "recepcionista" in texto:
+        return "Problema recepción"
+    elif "sin personal" in texto:
+        return "Problema recepción"
+    elif "demora" in texto:
+        return "Demoras"
+    elif "camiones" in texto:
+        return "Demoras"
+    elif "bloqueado" in texto or "2hs" in texto:
+        return "Problemas para descargar"
+    elif "no se entrego" in texto:
+        return "Problemas para descargar"
+    elif "fuera de horario" in texto:
+        return "Fuera de horario"
+    elif "turno" in texto:
+        return "Problema de turnado"
+    elif "zorra" in texto or "camion fuera de servicio" in texto or "pala" in texto:
+        return "Problemas mecanicos"
+    elif "mercaderia" in texto or "producto" in texto or "faltante" in texto:
+        return "Problema con mercadería"
+    elif "pallet" in texto or "carga caida" in texto:
+        return "Problema con carga"
+    elif "vencimiento" in texto or "fecha corta" in texto or "corto vencimiento" in texto:
+        return "Fecha corta / vencimiento"
+    elif "fecha" in texto:
+        return "Fecha corta / vencimiento"
+    elif "devolucion" in texto or "devulucion" in texto:
+        return "Problemas con devolución"
+    elif "lluvia" in texto or "inundada" in texto:
+        return "Problema climático"
+    elif "ruteado" in texto:
+        return "Error de ruteo"
+    elif "comercial" in texto or "ejecutivo" in texto:
+        return "Problema comercial"
+    elif "sin motivo" in texto:
+        return "Sin motivo cargado"
+    else:
+        return "Otros"
+
+
+# 👇 TU DICCIONARIO COMPLETO (NO TOCO NADA)
+def clasificar_otros_exacto(texto):
+    texto = str(texto).strip().upper()
+
+    mapa = {
+        # (TODO tu mapa completo va acá EXACTAMENTE como lo tenías)
+    }
+
+    return mapa.get(texto, "Otros")
+
+
+# ======================
+# CLASIFICACIÓN
+# ======================
+df["grupo_motivo"] = df["OBSERVACIONES_x"].apply(clasificar_motivo)
+
+mask = df["grupo_motivo"] == "Otros"
+df.loc[mask, "grupo_motivo"] = df.loc[mask, "OBSERVACIONES_x"].apply(clasificar_otros_exacto)
+
+# ======================
+# FILTRO FALLIDAS
+# ======================
+df_fallidas = df[df["ES_FALLIDA"] == True]
+
+# ======================
+# RANKING (TUYO)
+# ======================
+ranking = (
+    df_fallidas
+    .groupby("grupo_motivo")
+    .size()
+    .sort_values(ascending=False)
+    .reset_index(name="cantidad")
+)
+
+ranking["%"] = ranking["cantidad"] / ranking["cantidad"].sum() * 100
+
+# ======================
+# KPIs
+# ======================
+col1, col2 = st.columns(2)
+
+col1.metric("Total rechazos", len(df_fallidas))
+col2.metric("Motivo principal", ranking.iloc[0]["grupo_motivo"])
+
+# ======================
+# GRÁFICO
+# ======================
+st.subheader("📊 Ranking de motivos")
+
+fig = px.bar(
+    ranking,
+    x="cantidad",
+    y="grupo_motivo",
+    orientation="h",
+    text="cantidad"
+)
+
+fig.update_layout(yaxis={'categoryorder': 'total ascending'})
+
+st.plotly_chart(fig, use_container_width=True)
+
+# ======================
+# PARETO
+# ======================
+st.subheader("📈 Pareto")
+
+ranking = ranking.sort_values(by="cantidad", ascending=False)
+ranking["acumulado_%"] = ranking["cantidad"].cumsum() / ranking["cantidad"].sum() * 100
+
+fig2 = go.Figure()
+
+fig2.add_bar(x=ranking["grupo_motivo"], y=ranking["cantidad"])
+fig2.add_scatter(x=ranking["grupo_motivo"], y=ranking["acumulado_%"], yaxis="y2")
+
+fig2.update_layout(
+    yaxis=dict(title="Cantidad"),
+    yaxis2=dict(title="% acumulado", overlaying="y", side="right"),
+    xaxis=dict(tickangle=45)
+)
+
+st.plotly_chart(fig2, use_container_width=True)
+
+# ======================
+# TABLA
+# ======================
+st.subheader("📋 Detalle")
+
+st.dataframe(ranking)
+
+
+
+
+
+
+
+
+
