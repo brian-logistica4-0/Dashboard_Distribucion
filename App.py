@@ -595,10 +595,14 @@ def clasificar_motivo(texto):
     else:
         return "Otros"
 
+import unicodedata
 
 def normalizar(texto):
-    texto = str(texto).upper()
-    texto = texto.strip()
+    texto = str(texto).upper().strip()
+    
+    # 👇 CLAVE: elimina tildes
+    texto = unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8')
+    
     texto = re.sub(r"\s+", " ", texto)
     return texto
 
