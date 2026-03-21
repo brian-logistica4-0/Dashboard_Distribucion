@@ -847,17 +847,19 @@ def procesar_datos(df):
         )
     )
 
-    df.loc[condicion, "OBSERVACIONES_x"] = df.loc[condicion, "MOTIVO_-_CÓDIGO"]
+df["texto_clasificar"] = df["OBSERVACIONES_x"]
 
-    df["grupo_motivo"] = df["OBSERVACIONES_x"].apply(clasificar_motivo)
+df.loc[
+    df["texto_clasificar"].isna() |
+    (df["texto_clasificar"].astype(str).str.strip().isin(["", "nan", "none", "NaN"])),
+    "texto_clasificar"
+] = df["MOTIVO_-_CÓDIGO"]
 
-    mask = df["grupo_motivo"] == "Otros"
-    df.loc[mask, "grupo_motivo"] = df.loc[mask, "OBSERVACIONES_x"].apply(clasificar_otros_exacto)
+df["grupo_motivo"] = df["texto_clasificar"].apply(clasificar_motivo)
 
-    return df
+mask = df["grupo_motivo"] == "Otros"
+df.loc[mask, "grupo_motivo"] = df.loc[mask, "texto_clasificar"].apply(clasificar_otros_exacto)
 
-
-df = procesar_datos(df)
 
 # ======================
 # FILTRO FALLIDAS
