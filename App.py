@@ -1106,8 +1106,13 @@ fig_heat.update_layout(
 
 st.plotly_chart(fig_heat, use_container_width=True)
 
+## TOP ZONAS CRITICAS 
 
+st.subheader("📍 Zonas más críticas")
 
+top_zonas = clusters.sort_values("cantidad", ascending=False).head(5)
+
+st.dataframe(top_zonas, use_container_width=True)
 
 
 
