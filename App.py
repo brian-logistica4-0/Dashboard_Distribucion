@@ -846,7 +846,7 @@ def procesar_datos(df):
 
     return df
 
-df_filtrado = procesar_datos(df_filtrado))
+df_filtrado = procesar_datos(df_filtrado)
     
 # ======================
 # FILTRO FALLIDAS
