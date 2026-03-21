@@ -874,7 +874,7 @@ top_otros = (
     otros["OBSERVACIONES_x"]
     .astype(str)
     .value_counts()
-    .head(20)
+    .head(100)
     .reset_index()
 )
 
