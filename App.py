@@ -826,7 +826,7 @@ def clasificar_otros_exacto(texto):
     
     }
 
-  mapa_normalizado = {normalizar(k): v for k, v in mapa.items()}
+    mapa_normalizado = {normalizar(k): v for k, v in mapa.items()}
 
     return mapa_normalizado.get(texto, "Otros")
 
