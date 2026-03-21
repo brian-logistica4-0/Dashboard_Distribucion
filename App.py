@@ -866,6 +866,22 @@ ranking = (
 
 ranking["%"] = ranking["cantidad"] / ranking["cantidad"].sum() * 100
 
+st.subheader("🔍 Top casos en OTROS")
+
+otros = df_fallidas[df_fallidas["grupo_motivo"] == "Otros"]
+
+top_otros = (
+    otros["OBSERVACIONES_x"]
+    .astype(str)
+    .value_counts()
+    .head(20)
+    .reset_index()
+)
+
+top_otros.columns = ["OBSERVACION", "CANTIDAD"]
+
+st.dataframe(top_otros)
+
 # ======================
 # KPIs
 # ======================
