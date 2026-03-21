@@ -453,48 +453,6 @@ with col2:
     st.plotly_chart(fig_map, use_container_width=True)
 
 # ======================
-# 🔥 MAPA DE CALOR DE RECHAZOS
-# ======================
-
-st.subheader("🔥 Mapa de calor de rechazos")
-
-df_heat = df_filtrado[
-    (df_filtrado["ES_FALLIDA"] == True)
-].dropna(subset=["LATITUD", "LONGITUD"]).copy()
-
-fig_heat = go.Figure()
-
-fig_heat.add_trace(go.Densitymapbox(
-    lat=df_heat["LATITUD"],
-    lon=df_heat["LONGITUD"],
-    z=[1]*len(df_heat),
-    radius=20,
-    showscale=False
-))
-
-fig_heat.add_trace(go.Scattermapbox(
-    lat=df_heat["LATITUD"],
-    lon=df_heat["LONGITUD"],
-    mode="markers",
-    marker=dict(size=6, color="black"),
-    text=df_heat["CLIENTE"],
-    customdata=df_heat[["grupo_motivo"]],
-    hovertemplate=
-        "<b>%{text}</b><br>" +
-        "⚠️ %{customdata[0]}" +
-        "<extra></extra>"
-))
-
-fig_heat.update_layout(
-    mapbox_style="carto-positron",
-    mapbox=dict(center={"lat": -34.6, "lon": -58.45}, zoom=8),
-    height=600,
-    margin=dict(l=0, r=0, t=0, b=0)
-)
-
-st.plotly_chart(fig_heat, use_container_width=True)
-
-# ======================
 # 🟩 FILA 2
 # ======================
 col3, col4 = st.columns(2)
@@ -1086,7 +1044,47 @@ st.subheader("📋 Detalle")
 
 st.dataframe(ranking)
 
+# ======================
+# 🔥 MAPA DE CALOR DE RECHAZOS
+# ======================
 
+st.subheader("🔥 Mapa de calor de rechazos")
+
+df_heat = df_filtrado[
+    (df_filtrado["ES_FALLIDA"] == True)
+].dropna(subset=["LATITUD", "LONGITUD"]).copy()
+
+fig_heat = go.Figure()
+
+fig_heat.add_trace(go.Densitymapbox(
+    lat=df_heat["LATITUD"],
+    lon=df_heat["LONGITUD"],
+    z=[1]*len(df_heat),
+    radius=20,
+    showscale=False
+))
+
+fig_heat.add_trace(go.Scattermapbox(
+    lat=df_heat["LATITUD"],
+    lon=df_heat["LONGITUD"],
+    mode="markers",
+    marker=dict(size=6, color="black"),
+    text=df_heat["CLIENTE"],
+    customdata=df_heat[["grupo_motivo"]],
+    hovertemplate=
+        "<b>%{text}</b><br>" +
+        "⚠️ %{customdata[0]}" +
+        "<extra></extra>"
+))
+
+fig_heat.update_layout(
+    mapbox_style="carto-positron",
+    mapbox=dict(center={"lat": -34.6, "lon": -58.45}, zoom=8),
+    height=600,
+    margin=dict(l=0, r=0, t=0, b=0)
+)
+
+st.plotly_chart(fig_heat, use_container_width=True)
 
 
 
