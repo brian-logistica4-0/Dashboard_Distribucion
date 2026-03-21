@@ -602,11 +602,14 @@ def clasificar_motivo(texto):
 
 
 # 👇 TU DICCIONARIO COMPLETO (NO TOCO NADA)
-def clasificar_otros_exacto(texto):
-
+def normalizar(texto):
     texto = str(texto).upper()
     texto = texto.strip()
-    texto = re.sub(r"\s+", " ", texto)  # elimina espacios dobles
+    texto = re.sub(r"\s+", " ", texto)
+    return texto
+    
+def clasificar_otros_exacto(texto):
+    texto = normalizar(texto)
 
     mapa = {
        # RECEPCIÓN
@@ -823,7 +826,9 @@ def clasificar_otros_exacto(texto):
     
     }
 
-    return mapa.get(texto, "Otros")
+  mapa_normalizado = {normalizar(k): v for k, v in mapa.items()}
+
+    return mapa_normalizado.get(texto, "Otros")
 
 
 # ======================
