@@ -846,7 +846,7 @@ def procesar_datos(df):
             (df["OBSERVACIONES_x"].astype(str).str.strip().isin(["", "nan","none","NaN"]))
         )
     )
-)
+
 df.loc[condicion, "OBSERVACIONES_x"] = df.loc[condicion, "MOTIVO_-_CÓDIGO"]
 
 df["grupo_motivo"] = df["OBSERVACIONES_x"].apply(clasificar_motivo)
