@@ -1007,7 +1007,7 @@ fig = px.bar(
     orientation="h",
     text="cantidad"
 )
-
+fig.update_traces(marker_color="#6C757D")
 fig.update_layout(yaxis={'categoryorder': 'total ascending'})
 
 st.plotly_chart(fig, use_container_width=True)
@@ -1022,7 +1022,11 @@ ranking["acumulado_%"] = ranking["cantidad"].cumsum() / ranking["cantidad"].sum(
 
 fig2 = go.Figure()
 
-fig2.add_bar(x=ranking["grupo_motivo"], y=ranking["cantidad"])
+fig2.add_bar(
+    x=ranking["grupo_motivo"],
+    y=ranking["cantidad"],
+    marker_color="#6C757D"
+)
 fig2.add_scatter(x=ranking["grupo_motivo"], y=ranking["acumulado_%"], yaxis="y2")
 
 fig2.update_layout(
