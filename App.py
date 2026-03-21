@@ -503,19 +503,14 @@ tabla_viajes_tipo["RECHAZO_%"] = (
 st.dataframe(tabla_viajes_tipo, use_container_width=False)
 
 
-
 # ======================
-# MOTIVOS DE RECHAZO
+# CARGA DATOS
 # ======================
-condicion = (
-    (df["ES_FALLIDA"]) &
-    (
-        df["OBSERVACIONES_x"].isna() |
-        (df["OBSERVACIONES_x"].astype(str).str.strip().isin(["", "nan","none","NaN"]))
-    )
-)
+@st.cache_data
+def cargar_datos():
+    return pd.read_csv("dataset_limpio.csv")
 
-df.loc[condicion, "OBSERVACIONES_x"] = df.loc[condicion, "MOTIVO_-_CÓDIGO"]
+df = cargar_datos().copy()
 
 # ======================
 # FUNCIONES
@@ -601,18 +596,18 @@ def clasificar_motivo(texto):
         return "Otros"
 
 
-# 👇 TU DICCIONARIO COMPLETO (NO TOCO NADA)
 def normalizar(texto):
     texto = str(texto).upper()
     texto = texto.strip()
     texto = re.sub(r"\s+", " ", texto)
     return texto
-    
+
+
 def clasificar_otros_exacto(texto):
     texto = normalizar(texto)
 
     mapa = {
-       # RECEPCIÓN
+        # RECEPCIÓN
     "SIN RECEPCIÒN SE VUELVE SOLO": "Problema recepción",
     "SIN REEPCIONISTA": "Problema recepción",
     "RECIBEN LA MITAD DEL PEDIDO": "Problema recepción",
@@ -823,7 +818,7 @@ def clasificar_otros_exacto(texto):
 
     # CALIDAD / CARGA
     "CHOFER NO QUIERE VOLVER A PASAR POR ESTAR MAL CARGADO EL CAMIION": "Problema con carga"
-    
+        
     }
 
     mapa_normalizado = {normalizar(k): v for k, v in mapa.items()}
@@ -832,12 +827,30 @@ def clasificar_otros_exacto(texto):
 
 
 # ======================
-# CLASIFICACIÓN
+# PROCESAMIENTO (CACHEADO)
 # ======================
-df["grupo_motivo"] = df["OBSERVACIONES_x"].apply(clasificar_motivo)
+@st.cache_data
+def procesar_datos(df):
 
-mask = df["grupo_motivo"] == "Otros"
-df.loc[mask, "grupo_motivo"] = df.loc[mask, "OBSERVACIONES_x"].apply(clasificar_otros_exacto)
+    condicion = (
+        (df["ES_FALLIDA"]) &
+        (
+            df["OBSERVACIONES_x"].isna() |
+            (df["OBSERVACIONES_x"].astype(str).str.strip().isin(["", "nan","none","NaN"]))
+        )
+    )
+
+    df.loc[condicion, "OBSERVACIONES_x"] = df.loc[condicion, "MOTIVO_-_CÓDIGO"]
+
+    df["grupo_motivo"] = df["OBSERVACIONES_x"].apply(clasificar_motivo)
+
+    mask = df["grupo_motivo"] == "Otros"
+    df.loc[mask, "grupo_motivo"] = df.loc[mask, "OBSERVACIONES_x"].apply(clasificar_otros_exacto)
+
+    return df
+
+
+df = procesar_datos(df)
 
 # ======================
 # FILTRO FALLIDAS
@@ -845,7 +858,7 @@ df.loc[mask, "grupo_motivo"] = df.loc[mask, "OBSERVACIONES_x"].apply(clasificar_
 df_fallidas = df[df["ES_FALLIDA"] == True]
 
 # ======================
-# RANKING (TUYO)
+# RANKING
 # ======================
 ranking = (
     df_fallidas
@@ -909,6 +922,7 @@ st.plotly_chart(fig2, use_container_width=True)
 st.subheader("📋 Detalle")
 
 st.dataframe(ranking)
+
 
 
 
