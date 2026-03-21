@@ -604,9 +604,9 @@ def clasificar_motivo(texto):
 # 👇 TU DICCIONARIO COMPLETO (NO TOCO NADA)
 def clasificar_otros_exacto(texto):
 
-texto = str(texto).upper()
-texto = texto.strip()
-texto = re.sub(r"\s+", " ", texto)  # elimina espacios dobles
+    texto = str(texto).upper()
+    texto = texto.strip()
+    texto = re.sub(r"\s+", " ", texto)  # elimina espacios dobles
 
     mapa = {
        # RECEPCIÓN
