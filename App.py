@@ -1079,8 +1079,14 @@ fig_heat.add_trace(go.Densitymapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
     z=df_heat.groupby(["LATITUD", "LONGITUD"])["LATITUD"].transform("count"),
-    radius=25,
-    colorscale="YlOrRd",  # 🔥 amarillo → naranja → rojo
+    radius=18,
+    opacity=0.6,
+    colorscale=[
+        [0, "rgba(255,255,204,0.3)"],
+        [0.3, "yellow"],
+        [0.6, "orange"],
+        [1, "red"]
+    ],
     showscale=True
 ))
 
@@ -1088,7 +1094,7 @@ fig_heat.add_trace(go.Scattermapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
     mode="markers",
-    marker=dict(size=6, color="black"),
+    marker=dict(size=4, color="black", opacity=0.5),
     text=df_heat["CLIENTE"],
     customdata=df_heat[["grupo_motivo"]],
     hovertemplate=
