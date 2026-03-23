@@ -1088,7 +1088,6 @@ fig_heat.add_trace(go.Densitymapbox(
     z=clusters["z_norm"],
     radius=12,   # 👈 CAMBIO CLAVE
     opacity=0.8,
-    opacity=0.8,
     colorscale=[
         [0, "#00FF00"],      # verde fuerte
         [0.2, "#ADFF2F"],    # verde claro
