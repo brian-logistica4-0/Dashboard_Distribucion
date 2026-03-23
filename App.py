@@ -1082,11 +1082,11 @@ fig_heat.add_trace(go.Densitymapbox(
     radius=18,
     opacity=0.6,
     colorscale=[
-        [0, "rgba(255,255,204,0.3)"],
-        [0.3, "yellow"],
-        [0.6, "orange"],
-        [1, "red"]
-    ],
+    [0, "green"],
+    [0.4, "yellow"],
+    [0.7, "orange"],
+    [1, "red"]
+]
     showscale=True
 ))
 
