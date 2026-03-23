@@ -1086,7 +1086,7 @@ fig_heat.add_trace(go.Densitymapbox(
     lat=clusters["lat_bin"],
     lon=clusters["lon_bin"],
     z=clusters["z_norm"],
-    radius=18,  # 👈 más chico = más definido
+    radius=12,  # 👈 más chico = más definido
     opacity=0.8,
     colorscale=[
         [0, "#00FF00"],      # verde fuerte
