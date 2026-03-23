@@ -1082,7 +1082,7 @@ z_norm = (z_values - z_values.min()) / (z_values.max() - z_values.min())
 fig_heat.add_trace(go.Densitymapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
-    z=df_heat.groupby(["LATITUD", "LONGITUD"])["LATITUD"].transform("count"),
+    z=z_norm,
     radius=18,
     opacity=0.6,
     colorscale=[
