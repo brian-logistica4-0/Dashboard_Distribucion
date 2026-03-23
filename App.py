@@ -1077,20 +1077,23 @@ fig_heat = go.Figure()
 
 z_values = df_heat.groupby(["LATITUD", "LONGITUD"])["LATITUD"].transform("count")
 
-z_norm = (z_values - z_values.min()) / (z_values.max() - z_values.min())
+z_norm = z_values.rank(pct=True)
+
+# normalización por cluster
+clusters["z_norm"] = clusters["cantidad"].rank(pct=True)
 
 fig_heat.add_trace(go.Densitymapbox(
-    lat=df_heat["LATITUD"],
-    lon=df_heat["LONGITUD"],
-    z=z_norm,
-    radius=18,
-    opacity=0.6,
+    lat=clusters["lat_bin"],
+    lon=clusters["lon_bin"],
+    z=clusters["z_norm"],
+    radius=30,
+    opacity=0.7,
     colorscale=[
-    [0, "green"],
-    [0.4, "yellow"],
-    [0.7, "orange"],
-    [1, "red"]
-],
+        [0, "green"],
+        [0.3, "yellow"],
+        [0.6, "orange"],
+        [1, "red"]
+    ],
     showscale=True
 ))
 
