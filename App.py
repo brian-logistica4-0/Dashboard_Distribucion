@@ -1079,7 +1079,7 @@ fig_heat.add_trace(go.Densitymapbox(
     lat=df_heat["LATITUD"],
     lon=df_heat["LONGITUD"],
     z=df_heat.groupby(["LATITUD", "LONGITUD"])["LATITUD"].transform("count"),
-    radius=18,
+    radius=15,
     opacity=0.6,
     colorscale=[
         [0, "rgba(255,255,204,0.3)"],
