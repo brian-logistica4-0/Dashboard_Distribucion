@@ -1120,9 +1120,10 @@ fig_heat.update_layout(
 
 st.plotly_chart(fig_heat, use_container_width=True)
 
-## TOP ZONAS CRITICAS 
-
-st.subheader("🔥 Zonas más críticas")
+# ======================
+# 🔥 TOP ZONAS CRÍTICAS
+# ======================
+st.subheader("🔥 Top zonas críticas")
 
 top_zonas = (
     clusters
@@ -1131,14 +1132,20 @@ top_zonas = (
     .copy()
 )
 
+# etiqueta más amigable
 top_zonas["zona"] = (
-    top_zonas["lat_bin"].astype(str) + ", " + top_zonas["lon_bin"].astype(str)
+    "Lat: " + top_zonas["lat_bin"].astype(str) +
+    " | Lon: " + top_zonas["lon_bin"].astype(str)
+)
+
+# porcentaje sobre total
+top_zonas["%"] = (
+    top_zonas["cantidad"] / top_zonas["cantidad"].sum() * 100
 )
 
 st.dataframe(
-    top_zonas[["zona", "cantidad"]],
+    top_zonas[["zona", "cantidad", "%"]],
     use_container_width=True
 )
-
 
 
