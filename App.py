@@ -25,6 +25,8 @@ def cargar_datos():
 
 df, tabla_cf, tabla_viajes = cargar_datos()
 
+st.write(df[["LOCALIDAD", "ZONA_DETALLE"]].head(20))
+
 # ======================
 # FILTRO
 # ======================
