@@ -1121,31 +1121,26 @@ fig_heat.update_layout(
 st.plotly_chart(fig_heat, use_container_width=True)
 
 # ======================
-# 🔥 TOP ZONAS CRÍTICAS
+# 🔥 RANKING POR LOCALIDAD
 # ======================
-st.subheader("🔥 Top zonas críticas")
+st.subheader("🏙️ Ranking de rechazos por localidad")
 
-top_zonas = (
-    clusters
+df_loc = df_filtrado[
+    (df_filtrado["ES_FALLIDA"] == True)
+].copy()
+
+ranking_loc = (
+    df_loc
+    .groupby("LOCALIDAD")
+    .size()
+    .reset_index(name="cantidad")
     .sort_values("cantidad", ascending=False)
-    .head(10)
-    .copy()
 )
 
-# etiqueta más amigable
-top_zonas["zona"] = (
-    "Lat: " + top_zonas["lat_bin"].astype(str) +
-    " | Lon: " + top_zonas["lon_bin"].astype(str)
+ranking_loc["%"] = (
+    ranking_loc["cantidad"] / ranking_loc["cantidad"].sum() * 100
 )
 
-# porcentaje sobre total
-top_zonas["%"] = (
-    top_zonas["cantidad"] / top_zonas["cantidad"].sum() * 100
-)
-
-st.dataframe(
-    top_zonas[["zona", "cantidad", "%"]],
-    use_container_width=True
-)
+st.dataframe(ranking_loc, use_container_width=True)
 
 
