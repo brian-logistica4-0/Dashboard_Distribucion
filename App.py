@@ -1125,11 +1125,9 @@ st.plotly_chart(fig_heat, use_container_width=True)
 st.subheader("🏙️ Zonas con mayor rechazo")
 
 # filtrar solo rechazos
-df_loc = df_filtrado[
-    df_filtrado["ES_FALLIDA"] == True
-].copy()
+df_loc = df_filtrado[df_filtrado["ES_FALLIDA"] == True].copy()
 
-# usar ZONA_DETALLE (CLAVE)
+# asegurar que no haya nulos
 df_loc = df_loc.dropna(subset=["ZONA_DETALLE"])
 
 # agrupación
@@ -1154,7 +1152,7 @@ if not ranking_loc.empty:
     col1.metric("Zona más crítica", ranking_loc.iloc[0]["ZONA_DETALLE"])
     col2.metric("Cantidad de rechazos", int(ranking_loc.iloc[0]["cantidad"]))
 else:
-    st.warning("No hay datos de rechazo para mostrar")
+    st.warning("No hay datos de rechazo")
 
 # ======================
 # GRÁFICO TOP 10
@@ -1186,5 +1184,4 @@ st.plotly_chart(fig_loc, use_container_width=True)
 # TABLA
 # ======================
 st.dataframe(ranking_loc, use_container_width=True)
-
 
