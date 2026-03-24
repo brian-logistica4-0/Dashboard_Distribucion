@@ -14,6 +14,7 @@ st.title("📦 Dashboard de Distribución - Rechazo Logístico")
 # ======================
 # CARGA DATOS
 # ======================
+@st.cache_data(ttl=0)
 
 def cargar_datos():
     df = pd.read_csv("dataset_final_con_barrios.csv")
