@@ -1121,13 +1121,16 @@ fig_heat.update_layout(
 st.plotly_chart(fig_heat, use_container_width=True)
 
 # ======================
-# 🔥 RANKING POR LOCALIDAD
+# 🏙️ RANKING DE ZONAS CRÍTICAS
 # ======================
-st.subheader("🏙️ Ranking de rechazos por localidad")
+st.subheader("🏙️ Zonas con mayor rechazo")
 
 df_loc = df_filtrado[
     (df_filtrado["ES_FALLIDA"] == True)
 ].copy()
+
+# sacamos nulos por las dudas
+df_loc = df_loc.dropna(subset=["LOCALIDAD"])
 
 ranking_loc = (
     df_loc
@@ -1141,6 +1144,33 @@ ranking_loc["%"] = (
     ranking_loc["cantidad"] / ranking_loc["cantidad"].sum() * 100
 )
 
-st.dataframe(ranking_loc, use_container_width=True)
+# 🔹 KPI rápido
+col1, col2 = st.columns(2)
+col1.metric("Localidad más crítica", ranking_loc.iloc[0]["LOCALIDAD"])
+col2.metric("Cantidad de rechazos", int(ranking_loc.iloc[0]["cantidad"]))
 
+# 🔹 gráfico TOP 10
+fig_loc = px.bar(
+    ranking_loc.head(10),
+    x="cantidad",
+    y="LOCALIDAD",
+    orientation="h",
+    text="cantidad"
+)
+
+fig_loc.update_traces(
+    textposition="outside",
+    marker_color="#6c757d"  # gris corporativo
+)
+
+fig_loc.update_layout(
+    yaxis={'categoryorder': 'total ascending'},
+    plot_bgcolor="white",
+    paper_bgcolor="white"
+)
+
+st.plotly_chart(fig_loc, use_container_width=True)
+
+# 🔹 tabla completa
+st.dataframe(ranking_loc, use_container_width=True)
 
