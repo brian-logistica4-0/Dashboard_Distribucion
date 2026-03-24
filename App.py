@@ -18,7 +18,7 @@ st.title("📦 Dashboard de Distribución - Rechazo Logístico")
 st.cache_data.clear()
 @st.cache_data
 def cargar_datos():
-    df = pd.read_csv("dataset_con_localidad.csv")
+    df = pd.read_csv("dataset_final_con_barrios.csv")
     tabla_cf = pd.read_csv("tabla_rechazo.csv")
     tabla_viajes = pd.read_csv("tabla_rechazo_viajes.csv")
     return df, tabla_cf, tabla_viajes
@@ -1126,52 +1126,66 @@ st.plotly_chart(fig_heat, use_container_width=True)
 # ======================
 st.subheader("🏙️ Zonas con mayor rechazo")
 
+# filtrar solo rechazos
 df_loc = df_filtrado[
-    (df_filtrado["ES_FALLIDA"] == True)
+    df_filtrado["ES_FALLIDA"] == True
 ].copy()
 
-# sacamos nulos por las dudas
-df_loc = df_loc.dropna(subset=["LOCALIDAD"])
+# usar ZONA_DETALLE (CLAVE)
+df_loc = df_loc.dropna(subset=["ZONA_DETALLE"])
 
+# agrupación
 ranking_loc = (
     df_loc
-    .groupby("LOCALIDAD")
+    .groupby("ZONA_DETALLE")
     .size()
     .reset_index(name="cantidad")
     .sort_values("cantidad", ascending=False)
 )
 
+# porcentaje
 ranking_loc["%"] = (
     ranking_loc["cantidad"] / ranking_loc["cantidad"].sum() * 100
-)
+).round(2)
 
-# 🔹 KPI rápido
-col1, col2 = st.columns(2)
-col1.metric("Localidad más crítica", ranking_loc.iloc[0]["LOCALIDAD"])
-col2.metric("Cantidad de rechazos", int(ranking_loc.iloc[0]["cantidad"]))
+# ======================
+# KPI
+# ======================
+if not ranking_loc.empty:
+    col1, col2 = st.columns(2)
+    col1.metric("Zona más crítica", ranking_loc.iloc[0]["ZONA_DETALLE"])
+    col2.metric("Cantidad de rechazos", int(ranking_loc.iloc[0]["cantidad"]))
+else:
+    st.warning("No hay datos de rechazo para mostrar")
 
-# 🔹 gráfico TOP 10
+# ======================
+# GRÁFICO TOP 10
+# ======================
 fig_loc = px.bar(
     ranking_loc.head(10),
     x="cantidad",
-    y="LOCALIDAD",
+    y="ZONA_DETALLE",
     orientation="h",
     text="cantidad"
 )
 
 fig_loc.update_traces(
     textposition="outside",
-    marker_color="#6c757d"  # gris corporativo
+    marker_color="#6c757d"
 )
 
 fig_loc.update_layout(
     yaxis={'categoryorder': 'total ascending'},
     plot_bgcolor="white",
-    paper_bgcolor="white"
+    paper_bgcolor="white",
+    yaxis_title="Zona",
+    xaxis_title="Cantidad de rechazos"
 )
 
 st.plotly_chart(fig_loc, use_container_width=True)
 
-# 🔹 tabla completa
-st.dataframe(ranking_loc, use_container_width=True)
+# ======================
+# TABLA
+# ======================
+st.dataframe(ranking_loc, use_container_width=True)True)
 
