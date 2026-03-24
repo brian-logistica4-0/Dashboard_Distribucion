@@ -15,8 +15,6 @@ st.title("📦 Dashboard de Distribución - Rechazo Logístico")
 # CARGA DATOS
 # ======================
 
-st.cache_data.clear()
-@st.cache_data
 def cargar_datos():
     df = pd.read_csv("dataset_final_con_barrios.csv")
     tabla_cf = pd.read_csv("tabla_rechazo.csv")
@@ -1187,8 +1185,6 @@ st.plotly_chart(fig_loc, use_container_width=True)
 # ======================
 # TABLA
 # ======================
-st.dataframe(ranking_loc, use_container_width=True)True)
-
-st.write("update")
+st.dataframe(ranking_loc, use_container_width=True)
 
 
