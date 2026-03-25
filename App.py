@@ -10,6 +10,7 @@ import re
 st.set_page_config(page_title="Dashboard Logístico", layout="wide")
 
 st.title("📦 Dashboard de Distribución - Rechazo Logístico")
+st.write("deploy test")
 
 # ======================
 # CARGA DATOS
@@ -1187,5 +1188,5 @@ st.plotly_chart(fig_loc, use_container_width=True)
 # ======================
 st.dataframe(ranking_loc, use_container_width=True)
 
-st.write("deploy test")
+
 
