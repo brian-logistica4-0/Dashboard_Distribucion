@@ -945,8 +945,9 @@ def clasificar_otros_exacto(texto):
 # ======================
 # PROCESAMIENTO (CACHEADO)
 # ======================
-@st.cache_data
 def procesar_datos(df):
+
+    df = df.copy()
 
         # crear columna auxiliar
     df["texto_clasificar"] = df["OBSERVACIONES_x"]
