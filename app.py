@@ -14,7 +14,7 @@ st.title("📦 Dashboard de Distribución - Rechazo Logístico")
 # ======================
 # CARGA DATOS
 # ======================
-@st.cache_data(ttl=0)
+@st.cache_data(ttl=600)
 
 def cargar_datos():
     df = pd.read_csv("dataset_final_con_barrios.csv")
@@ -945,6 +945,7 @@ def clasificar_otros_exacto(texto):
 # ======================
 # PROCESAMIENTO (CACHEADO)
 # ======================
+@st.cache_data
 def procesar_datos(df):
 
     df = df.copy()
