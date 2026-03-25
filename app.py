@@ -10,7 +10,6 @@ import re
 st.set_page_config(page_title="Dashboard Logístico", layout="wide")
 
 st.title("📦 Dashboard de Distribución - Rechazo Logístico")
-st.write("deploy test")
 
 # ======================
 # CARGA DATOS
