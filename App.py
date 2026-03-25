@@ -1187,3 +1187,5 @@ st.plotly_chart(fig_loc, use_container_width=True)
 # ======================
 st.dataframe(ranking_loc, use_container_width=True)
 
+st.write("deploy test")
+
