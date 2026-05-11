@@ -151,6 +151,10 @@ if "TIPO" in df.columns:
     if tipo:
         df_filtrado = df_filtrado[df_filtrado["TIPO"].isin(tipo)]
 
+if df_filtrado.empty:
+    st.warning("No hay datos para los filtros seleccionados.")
+    st.stop()
+
 # ======================
 # CALCULOS
 # ======================
@@ -1046,7 +1050,11 @@ ranking["%"] = ranking["cantidad"] / ranking["cantidad"].sum() * 100
 col1, col2 = st.columns(2)
 
 col1.metric("Total rechazos", len(df_fallidas))
-col2.metric("Motivo principal", ranking.iloc[0]["grupo_motivo"])
+
+if not ranking.empty:
+    col2.metric("Motivo principal", ranking.iloc[0]["grupo_motivo"])
+else:
+    col2.metric("Motivo principal", "Sin datos")
 
 # ======================
 # GRÁFICO
