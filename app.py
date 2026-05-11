@@ -422,16 +422,21 @@ fig_map.update_layout(
 
 def estilizar_tabla(df):
 
-    columnas_porcentaje = [
-        col for col in df.columns
-        if "%" in col
-    ]
+    formato = {}
+
+    for col in df.columns:
+
+        # porcentajes
+        if "%" in col:
+            formato[col] = "{:.2f}"
+
+        # numéricos comunes
+        elif pd.api.types.is_numeric_dtype(df[col]):
+            formato[col] = "{:.0f}"
 
     return (
         df.style
-        .format({
-            col: "{:.2f}" for col in columnas_porcentaje
-        })
+        .format(formato)
         .set_properties(**{
             "text-align": "center"
         })
