@@ -188,7 +188,7 @@ tabla_clientes = (
 )
 tabla_clientes["RECHAZO_%"] = (
     tabla_clientes["CF_FALLIDAS"] / tabla_clientes["CF"] * 100
-).round(2)
+).round(1)
 
 top_clientes = tabla_clientes.sort_values("CF_FALLIDAS", ascending=False).head(10)
 
