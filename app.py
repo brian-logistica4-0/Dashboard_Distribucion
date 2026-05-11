@@ -445,7 +445,7 @@ with col1:
     g2.plotly_chart(fig_viajes, use_container_width=True)
     
     st.subheader(" 🏪 Top Clientes - Rechazos")
-    st.dataframe(top_clientes, use_container_width=True)
+    st.dataframe(estilizar_tabla(top_clientes), use_container_width=True)
 
 with col2:
     st.subheader("🗺️ Mapa de Distribución")
@@ -459,15 +459,35 @@ col3, col4 = st.columns(2)
 
 with col3:
     st.subheader("🚚 Rechazos por vehículos")
-    st.dataframe(tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(
+    estilizar_tabla(
+        tabla_camion.sort_values("RECHAZO_%", ascending=False).head(10)
+    ),
+    use_container_width=True
+)
     st.subheader("🚚 Rechazos por conductores")
-    st.dataframe(tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(
+    estilizar_tabla(
+        tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10)
+    ),
+    use_container_width=True
+)
 
 with col4:
     st.subheader("📉 Análisis  por cadenas")
-    st.dataframe(tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10), use_container_width=True)
+    st.dataframe(
+    estilizar_tabla(
+        tabla_cadena.sort_values("PART_RECHAZO_%", ascending=False).head(10)
+    ),
+    use_container_width=True
+)
     st.subheader("📉 Autorización de retorno")
-    st.dataframe(tabla_aut.sort_values("PARTICIPACION_%", ascending=False), use_container_width=True)
+    st.dataframe(
+    estilizar_tabla(
+        tabla_aut.sort_values("PARTICIPACION_%", ascending=False)
+    ),
+    use_container_width=True
+)
 
 # ======================
 # 🚚 RECHAZO POR TIPO DE VIAJE
@@ -500,7 +520,10 @@ tabla_viajes_tipo["RECHAZO_%"] = (
     tabla_viajes_tipo["CF_FALLIDAS"] / tabla_viajes_tipo["CF"]
 ) * 100
 
-st.dataframe(tabla_viajes_tipo, use_container_width=False)
+st.dataframe(
+    estilizar_tabla(tabla_viajes_tipo),
+    use_container_width=False
+)
 
 
 # ======================
@@ -1044,7 +1067,7 @@ st.plotly_chart(fig2, use_container_width=True)
 # ======================
 st.subheader("📋 Detalle")
 
-st.dataframe(ranking)
+st.dataframe(estilizar_tabla(ranking))
 
 # ======================
 # 🔥 MAPA DE CALOR DE RECHAZOS
@@ -1186,7 +1209,10 @@ st.plotly_chart(fig_loc, use_container_width=True)
 # ======================
 # TABLA
 # ======================
-st.dataframe(ranking_loc, use_container_width=True)
+st.dataframe(
+    estilizar_tabla(ranking_loc),
+    use_container_width=True
+)
 
 
 
