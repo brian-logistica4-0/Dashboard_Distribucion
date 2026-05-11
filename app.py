@@ -141,14 +141,15 @@ if isinstance(fecha_rango, tuple) and len(fecha_rango) == 2:
         (df_filtrado["FECHA_DE_SALIDA"] < fin)
     ]
 
-# FORMATO
-if "FORMATO_CADENA" in df.columns:
-    formato = st.sidebar.multiselect(
-        "Formato de Cliente",
-        df["FORMATO_CADENA"].dropna().unique()
+# TIPO
+if "TIPO" in df.columns:
+    tipo = st.sidebar.multiselect(
+        "Tipo",
+        sorted(df["TIPO"].dropna().unique())
     )
-    if formato:
-        df_filtrado = df_filtrado[df_filtrado["FORMATO_CADENA"].isin(formato)]
+
+    if tipo:
+        df_filtrado = df_filtrado[df_filtrado["TIPO"].isin(tipo)]
 
 # ======================
 # CALCULOS
