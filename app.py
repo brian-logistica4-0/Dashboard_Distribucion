@@ -428,11 +428,11 @@ def estilizar_tabla(df):
 
         # columnas porcentaje
         if "%" in col:
-            formato[col] = "{:.2f}"
+            formato[col] = lambda x: f"{x:.2f}"
 
-        # columnas numéricas comunes
+        # columnas numéricas
         elif pd.api.types.is_numeric_dtype(df[col]):
-            formato[col] = "{:,.0f}".replace(",", ".")
+            formato[col] = lambda x: f"{x:,.0f}".replace(",", ".")
 
     return (
         df.style
