@@ -420,6 +420,31 @@ fig_map.update_layout(
     legend_title="Zona"
 )
 
+def estilizar_tabla(df):
+
+    columnas_porcentaje = [
+        col for col in df.columns
+        if "%" in col
+    ]
+
+    formato = {
+        col: "{:.2f}"
+        for col in columnas_porcentaje
+    }
+
+    return (
+        df.style
+        .format(formato)
+        .set_properties(**{
+            "text-align": "center"
+        })
+        .set_table_styles([
+            {
+                "selector": "th",
+                "props": [("text-align", "center")]
+            }
+        ])
+    )
 # ======================
 # 🟦 FILA 1
 # ======================
