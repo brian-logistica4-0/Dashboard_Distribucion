@@ -469,7 +469,7 @@ with col1:
     # 🔹 FILA 2 (3 columnas)
     c4, c5, c6 = st.columns(3)
     c4.metric("🚚 Viajes Totales", f"{int(viajes_total):,}".replace(",", "."))
-    c5.metric("🚚 Viajes Rechazados", f"{int(viajes_rech):,}".replace(",", "."))
+    c5.metric("❌ Viajes Rechazados", f"{int(viajes_rech):,}".replace(",", "."))
     c6.metric("📊 % Rechazo Viajes", f"{rechazo_viajes:.2f}%")
 
     g1, g2 = st.columns(2)
