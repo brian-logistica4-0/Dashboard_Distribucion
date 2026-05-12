@@ -497,7 +497,7 @@ with col3:
     ),
     use_container_width=True
 )
-    st.subheader("🚚 Rechazos por conductores")
+    st.subheader("👨‍✈️ Rechazos por conductores")
     st.dataframe(
     estilizar_tabla(
         tabla_chofer.sort_values("RECHAZO_%", ascending=False).head(10)
